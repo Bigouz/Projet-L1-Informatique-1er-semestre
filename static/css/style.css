@@ -40,10 +40,10 @@ h1{
 }
 
 p{
-    margin-left: 10%;
+    text-align: center;
 }
 
-button.start{
+button{
     background-color: #7289da;
     border: none;
 }

@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<title>Sing On Light - Calibration</title>
+</head>
+<body>
+<div class = "parent">
+    <div class="div1">
+        <div class = "div1a">
+            <a class="indexBTN" href="/">Menu Principal</a><br>
+            <a class="playBTN" href="/play.html">Jouer</a><br>
+            <a class="calibrationBTN" style="color: #7289da;" href="/calibration.html">Calibration</a><br>
+            <a class="dataBTN" href="/data.html">Données</a>
+        </div>    
+    </div>
+    <div class="div2">
+        <h1>Sing On Light - Calibration</h1>
+        <div class="text">
+            <p>La calibration permet de régler la sensibilité des capteurs sonores.
+            </br>Il est conseillé de faire cette étape à chaque changement d'environnement sonore.
+            </p>
+            <input type="number" name="seuil" id="seuil" placeholder="Seuil de calibration (dB)" min="30" max="100" step="1" value="{{seuil}}" onchange="this.value=this.value.replace(/[^0-9]/g,''); if(this.value<30)this.value=30; if(this.value>100)this.value=100;">
+            <button class="calibrateBTN" onclick="calibrate()">Calibrer</button>
+            <script>
+            async function calibrate() {
+                const seuil = parseInt(document.getElementById('seuil').value);
+                
+                // Send parameters via POST with JSON body
+                const response = await fetch('/run-calibrate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({"seuil":seuil})
+                });
+
+                const data = await response.json();
+                document.getElementById('result').innerText = data.message;
+            }
+        </script>
+
+        </div>
+    </div>
+</div>
+
+</body>
+
+<link rel="stylesheet" href="static/css/style.css">
+</html>

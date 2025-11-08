@@ -14,14 +14,21 @@ async def lifespan(app : FastAPI):
     # Initialisation de la base de données SQLite
     connect = sqlite3.connect('singonlight.db')
     connect.execute('CREATE TABLE IF NOT EXISTS parametres (cle TEXT PRIMARY KEY,valeur INTEGER)') # utilisé afin d'obtenir le seuil de calibration
-    connect.execute('CREATE TABLE IF NOT EXISTS scores (id INTEGER, score INTEGER, maxScore INTEGER)') # utilisé afin d'obtenir les scores des parties jouées
+    connect.execute('CREATE TABLE IF NOT EXISTS scores (intervalleScore TEXT PRIMARY KEY, occurence INTEGER)') # utilisé afin d'obtenir les scores des parties jouées
     everything = connect.execute('SELECT * FROM parametres')
     data = everything.fetchall()
     print(len(data))
-    if len(data) < 3:
+    if len(data) == 0:
         connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?)', ("seuil",50)) # valeur par défaut du seuil de calibration
         connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?)', ("dureeIntervalle", 25)) # durée d'une intervalle
         connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?)', ("dureePartie", 25)) # durée de la partie en intervalles
+
+    stats = connect.execute('SELECT * FROM scores')
+    data_scores = stats.fetchall()
+    if len(data_scores) == 0:
+        for i in range(0,101,10): # initialisation des scores possibles de 0 à 100 de pas 10
+            connect.execute('INSERT INTO scores (intervalleScore, occurence) VALUES (?,?)', (str(i),0)) # valeur par défaut des scores
+
     connect.commit()
     connect.close()
     print("Base de données initialisée.")
@@ -50,7 +57,16 @@ def play(request:Request) -> str:
 
 @app.get("/data.html")
 def data(request:Request) -> str:
-    return templates.TemplateResponse('data.html',{'request': request})
+    connect = sqlite3.connect('singonlight.db')
+    scores = connect.execute('SELECT * FROM scores').fetchall()
+    connect.close()
+    s = []
+    for score in scores:
+        if score[0] == "100":
+            s.append([score[0]+"%", score[1]])
+        else:
+            s.append([score[0] + "-" + str(int(score[0])+9) + "%", score[1]])
+    return templates.TemplateResponse('data.html',{'request': request, 'scores':s})
 
 @app.get("/calibration.html")
 def calibration(request:Request) -> str:
@@ -71,7 +87,7 @@ async def run_calibrate(request:Request):
     body = await request.json()
     seuil = body.get("seuil", 50)
     result = save_calibration(int(seuil))
-    return result
+    return "Calibration sauvegardée."
 
 def save_param_jouer(dureeIntervalle:int, dureePartie:int):
     connect = sqlite3.connect('singonlight.db')
@@ -85,14 +101,43 @@ async def run_play(request:Request):
     body = await request.json()
     dureeIntervalle = body.get("dureeIntervalle",1)
     dureePartie = body.get("dureePartie",25)
-    print(dureePartie)
-    result = save_param_jouer(dureeIntervalle, dureePartie)
-    return result
+    save_param_jouer(dureeIntervalle, dureePartie)
 
-if __name__ == "__main__":
-    uvicorn.run(app) # lancement du serveur HTTP + WSGI avec les options de debug
+    for i in range(101):
+        enregistrer_score(i) ### A MODIFIER AVEC LE SCORE REEL OBTENU PAR LE JOUEUR
+    return "La partie a démarrée."
 
+
+@app.post("/reset_data")
+async def reset_data(request:Request):
+    connect = sqlite3.connect('singonlight.db')
+    for i in range(0,101,10):
+        connect.execute('UPDATE scores set occurence=0 WHERE intervalleScore=?', (str(i),))
+    connect.commit()
+    connect.close()
+    return {"status":"Les données ont bien été réinitialisées."}
 
 def transformer_signal_audio(signal_audio, seuil):
     """Transforme un signal audio en une liste binaire en fonction d'un seuil donné."""
     pass  # Implémentation à venir
+
+# a appeler en fin de partie
+def enregistrer_score(score_obtenu):
+    """Enregistre le score obtenu dans la base de données.
+    Args:
+        score_obtenu (int): Le score obtenu par le joueur (entre 0 et 100).
+    """
+    intervalle = (score_obtenu // 10) * 10  # Déterminer l'intervalle de score (0-10, 11-20, ..., 91-100)
+    connect = sqlite3.connect('singonlight.db')
+    # Récupérer l'occurence actuelle pour le score_obtenu
+    occurence_actuelle = connect.execute('SELECT occurence FROM scores WHERE intervalleScore=?', (str(intervalle),)).fetchone()[0]
+    # Incrémenter l'occurence
+    nouvelle_occurence = occurence_actuelle + 1
+    # Mettre à jour la base de données
+    connect.execute('UPDATE scores SET occurence=? WHERE intervalleScore=?', (nouvelle_occurence, str(intervalle)))
+    connect.commit()
+    connect.close()
+
+
+if __name__ == "__main__":
+    uvicorn.run(app) # lancement du serveur HTTP + WSGI avec les options de debug

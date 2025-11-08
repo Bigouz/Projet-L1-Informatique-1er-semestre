@@ -1,5 +1,10 @@
 <!doctype html>
 <html>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 <head>
 <title>Sing On Light - Jouer</title>
 </head>
@@ -18,14 +23,24 @@
     <div class="div2">
         <h1>Sing On Light - Données</h1>
         <div class="text">
-            <p>Sing on Light est un mini-jeu de rythme utilisant un Raspberry PI, 2 capteurs sonnores, un écran LCD et une LED.
-            </br>Le but est simple : Quand la LED s'allume, il faut faire un bruit.
+            <p>Les données de vos parties sont affichées ici.<br>
+                <figure class="highcharts-figure">
+                    <div id="container"></div>
+                    <p class="highcharts-description">
+                        Graphique représentant les différents scores obtenus lors des parties jouées.<br>
+                        <button class="refresh" onclick="location.reload()">Rafraîchir les données</button>
+                        <button class="red" onclick="reset_data()">Effacer les données</button><br>
+                    </p>
+                </figure>
             </p>
         </div>
     </div>
 </div>
-
+<span id="data" style="visibility: hidden;">{{scores}}</span>
 </body>
 
 <link rel="stylesheet" href="static/css/style.css">
+<script src="static/js/highcharts.js"></script>
+<script>
+    showChart(document.getElementById("data").innerHTML);</script>
 </html>

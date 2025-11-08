@@ -24,6 +24,8 @@
             <label for="seuil">Seuil : </label>
             <input type="number" name="seuil" id="seuil" placeholder="Seuil" min="30" max="100" step="1" value="{{seuil}}" onchange="this.value=this.value.replace(/[^0-9]/g,''); if(this.value<30)this.value=30; if(this.value>100)this.value=100;">
             <button class="calibrateBTN" onclick="calibrate()">Calibrer</button>
+            <br><br>
+            <p style="color:lime;" id="result">{{message}}</p>
             </p>
             <script>
             async function calibrate() {
@@ -37,7 +39,7 @@
                 });
 
                 const data = await response.json();
-                document.getElementById('result').innerText = data.message;
+                document.getElementById('result').innerText = data;
             }
         </script>
 

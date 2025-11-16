@@ -7,6 +7,8 @@ import asyncio
 from contextlib import asynccontextmanager
 import sqlite3
 import score as score
+import time
+from random import randint
 
 @asynccontextmanager # gestion du cycle de vie de l'application (onstartup/shutdown)
 async def lifespan(app : FastAPI):
@@ -101,11 +103,18 @@ async def run_play(request:Request):
     body = await request.json()
     dureeIntervalle = body.get("dureeIntervalle",1)
     dureePartie = body.get("dureePartie",25)
+    #dureeTotale = dureeIntervalle*dureePartie
     save_param_jouer(dureeIntervalle, dureePartie)
 
     for i in range(101):
         enregistrer_score(i) ### A MODIFIER AVEC LE SCORE REEL OBTENU PAR LE JOUEUR
-    return "La partie a démarrée."
+
+    """for i in range(dureeTotale):
+        time.sleep(60)
+        dureeTotale-=1
+        """ ### A MODIFIER POUR VISUALISER LE TEMPS QUI S'ECOULE (TESTS)
+
+    return f"La partie a démarrée." # \n Temps restant de la partie: {dureePartie} \n Temps restant de l'intervalle: {dureeIntervalle} \n Temps total restant: {dureeTotale}
 
 
 @app.post("/reset_data")
@@ -116,6 +125,30 @@ async def reset_data(request:Request):
     connect.commit()
     connect.close()
     return {"status":"Les données ont bien été réinitialisées."}
+
+def generation_rythme(longueur) -> list: 
+    """ Génère un rythme dit "aléatoire" de longueur longueur, composé de 1 et de 0."""
+    signal=[]
+    for i in range(longueur):
+        signal.append(randint(0, 1))
+    return signal
+
+def comparaison(lst, signal) -> list:
+    """ Compare deux listes (lst et signal) entre elles. Renvoie une liste composée de 1 et de 0, avec 1: mêmes éléments et 0: éléments différents."""
+    res=[]
+    for i in range(len(lst)):
+        if lst[i]==signal[i]:
+            res.append(1)
+        res.append(0)
+    return res
+
+def clignotement(signal, pause=60) -> None:
+    """ Crée (print) un clignotement en fonction d'un signal, avec une pause entre chaque séquence de 1s (60ms) par défaut."""
+    for i in range(len(signal)):
+        if signal[i]==1:
+            print("Clignotement")
+        time.sleep(pause)
+    return
 
 def transformer_signal_audio(signal_audio, seuil):
     """Transforme un signal audio en une liste binaire en fonction d'un seuil donné."""

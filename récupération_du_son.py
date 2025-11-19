@@ -5,6 +5,10 @@ import numpy as np
 import time
 import SoundSensor.py as sound
 
+connect = sqlite3.connect('singonlight.db')
+cursor = connect.execute('SELECT dureeIntervalle, dureePartie FROM parametres;')
+duree_intervalle, duree_parti = cursor.fetchone()
+
 # definition du décibel minimal a dépasser
 def recuperation son (n) :
   l = []

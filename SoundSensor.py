@@ -20,7 +20,7 @@ Grove = GroveSoundSensor
 def main():
   from grove.help import SlotHelper
   sh = SlotHelper(SlotHelper.ADC)
-  pin = sh.argv2pin()
+  pin = 0
 
   sensor = GroveSoundSensor(pin)
 

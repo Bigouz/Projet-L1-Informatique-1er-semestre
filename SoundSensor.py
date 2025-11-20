@@ -34,7 +34,7 @@ def main():
   connect.close()
   print('Detecting sound...')
   L=[]
-  for i in range(int(data*taux_interpolation*data2)):
+  for i in range(int(data*(1/taux_interpolation)*data2)):
       print('Sound value: {0}'.format(sensor.sound))
       L.append(sensor.sound)
       time.sleep(taux_interpolation)

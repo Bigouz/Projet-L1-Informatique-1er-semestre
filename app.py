@@ -15,21 +15,21 @@ async def lifespan(app : FastAPI):
     # Code à exécuter au démarrage de l'application
     # Initialisation de la base de données SQLite
     connect = sqlite3.connect('singonlight.db')
-    connect.execute('CREATE TABLE IF NOT EXISTS parametres (cle TEXT PRIMARY KEY,valeur INTEGER)') # utilisé afin d'obtenir le seuil de calibration
-    connect.execute('CREATE TABLE IF NOT EXISTS scores (intervalleScore TEXT PRIMARY KEY, occurence INTEGER)') # utilisé afin d'obtenir les scores des parties jouées
-    everything = connect.execute('SELECT * FROM parametres')
+    connect.execute('CREATE TABLE IF NOT EXISTS parametres (cle TEXT PRIMARY KEY,valeur INTEGER);') # utilisé afin d'obtenir le seuil de calibration
+    connect.execute('CREATE TABLE IF NOT EXISTS scores (intervalleScore TEXT PRIMARY KEY, occurence INTEGER);') # utilisé afin d'obtenir les scores des parties jouées
+    everything = connect.execute('SELECT * FROM parametres;')
     data = everything.fetchall()
     print(len(data))
     if len(data) == 0:
-        connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?)', ("seuil",50)) # valeur par défaut du seuil de calibration
-        connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?)', ("dureeIntervalle", 1)) # durée d'une intervalle
-        connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?)', ("dureePartie", 25)) # durée de la partie en intervalles
+        connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?);', ("seuil",50)) # valeur par défaut du seuil de calibration
+        connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?);', ("dureeIntervalle", 1)) # durée d'une intervalle
+        connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?);', ("dureePartie", 25)) # durée de la partie en intervalles
 
-    stats = connect.execute('SELECT * FROM scores')
+    stats = connect.execute('SELECT * FROM scores;')
     data_scores = stats.fetchall()
     if len(data_scores) == 0:
         for i in range(0,101,10): # initialisation des scores possibles de 0 à 100 de pas 10
-            connect.execute('INSERT INTO scores (intervalleScore, occurence) VALUES (?,?)', (str(i),0)) # valeur par défaut des scores
+            connect.execute('INSERT INTO scores (intervalleScore, occurence) VALUES (?,?);', (str(i),0)) # valeur par défaut des scores
 
     connect.commit()
     connect.close()
@@ -51,8 +51,8 @@ def main(request:Request):
 @app.get("/play.html")
 def play(request:Request) -> str:
     connect = sqlite3.connect("singonlight.db")
-    dureeIntervalle = connect.execute('SELECT valeur FROM parametres WHERE cle="dureeIntervalle"').fetchone()[0]
-    dureePartie = connect.execute('SELECT valeur FROM parametres WHERE cle="dureePartie"').fetchone()[0]
+    dureeIntervalle = connect.execute('SELECT valeur FROM parametres WHERE cle="dureeIntervalle";').fetchone()[0]
+    dureePartie = connect.execute('SELECT valeur FROM parametres WHERE cle="dureePartie";').fetchone()[0]
     connect.close()
 
     return templates.TemplateResponse('play.html',{'request': request,'dureeIntervalle':dureeIntervalle, "dureePartie":dureePartie})
@@ -60,7 +60,7 @@ def play(request:Request) -> str:
 @app.get("/data.html")
 def data(request:Request) -> str:
     connect = sqlite3.connect('singonlight.db')
-    scores = connect.execute('SELECT * FROM scores').fetchall()
+    scores = connect.execute('SELECT * FROM scores;').fetchall()
     connect.close()
     s = []
     for score in scores:
@@ -73,13 +73,13 @@ def data(request:Request) -> str:
 @app.get("/calibration.html")
 def calibration(request:Request) -> str:
     connect = sqlite3.connect('singonlight.db')
-    seuil = connect.execute('SELECT valeur FROM parametres WHERE cle="seuil"').fetchone()[0]
+    seuil = connect.execute('SELECT valeur FROM parametres WHERE cle="seuil";').fetchone()[0]
     connect.close()
     return templates.TemplateResponse('calibration.html',{'request': request, 'seuil':int(seuil)})
 
 def save_calibration(seuil: int):
     connect = sqlite3.connect('singonlight.db')
-    connect.execute('UPDATE parametres set valeur=(?) WHERE cle="seuil"', (seuil,))
+    connect.execute('UPDATE parametres set valeur=(?) WHERE cle="seuil";', (seuil,))
     connect.commit()
     connect.close()
 
@@ -93,8 +93,8 @@ async def run_calibrate(request:Request):
 
 def save_param_jouer(dureeIntervalle:int, dureePartie:int):
     connect = sqlite3.connect('singonlight.db')
-    connect.execute('UPDATE parametres set valeur=(?) WHERE cle="dureeIntervalle"', (dureeIntervalle,))
-    connect.execute('UPDATE parametres set valeur=(?) WHERE cle="dureePartie"', (dureePartie,))
+    connect.execute('UPDATE parametres set valeur=(?) WHERE cle="dureeIntervalle";', (dureeIntervalle,))
+    connect.execute('UPDATE parametres set valeur=(?) WHERE cle="dureePartie";', (dureePartie,))
     connect.commit()
     connect.close()
 
@@ -121,7 +121,7 @@ async def run_play(request:Request):
 async def reset_data(request:Request):
     connect = sqlite3.connect('singonlight.db')
     for i in range(0,101,10):
-        connect.execute('UPDATE scores set occurence=0 WHERE intervalleScore=?', (str(i),))
+        connect.execute('UPDATE scores set occurence=0 WHERE intervalleScore=?;', (str(i),))
     connect.commit()
     connect.close()
     return {"status":"Les données ont bien été réinitialisées."}
@@ -132,15 +132,6 @@ def generation_rythme(longueur) -> list:
     for i in range(longueur):
         signal.append(randint(0, 1))
     return signal
-
-def comparaison(lst, signal) -> list:
-    """ Compare deux listes (lst et signal) entre elles. Renvoie une liste composée de 1 et de 0, avec 1: mêmes éléments et 0: éléments différents."""
-    res=[]
-    for i in range(len(lst)):
-        if lst[i]==signal[i]:
-            res.append(1)
-        res.append(0)
-    return res
 
 def clignotement(signal, pause=60) -> None:
     """ Crée (print) un clignotement en fonction d'un signal, avec une pause entre chaque séquence de 1s (60ms) par défaut."""
@@ -163,11 +154,11 @@ def enregistrer_score(score_obtenu):
     intervalle = (score_obtenu // 10) * 10  # Déterminer l'intervalle de score (0-10, 11-20, ..., 91-100)
     connect = sqlite3.connect('singonlight.db')
     # Récupérer l'occurence actuelle pour le score_obtenu
-    occurence_actuelle = connect.execute('SELECT occurence FROM scores WHERE intervalleScore=?', (str(intervalle),)).fetchone()[0]
+    occurence_actuelle = connect.execute('SELECT occurence FROM scores WHERE intervalleScore=?;', (str(intervalle),)).fetchone()[0]
     # Incrémenter l'occurence
     nouvelle_occurence = occurence_actuelle + 1
     # Mettre à jour la base de données
-    connect.execute('UPDATE scores SET occurence=? WHERE intervalleScore=?', (nouvelle_occurence, str(intervalle)))
+    connect.execute('UPDATE scores SET occurence=? WHERE intervalleScore=?;', (nouvelle_occurence, str(intervalle)))
     connect.commit()
     connect.close()
 

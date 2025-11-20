@@ -28,9 +28,9 @@ def main():
   
   connect = sqlite3.connect("singonlight.db")
   data = connect.execute("SELECT dureeIntervalle FROM parametres;")
-  data = data.fetchone()
+  data = data.fetchone()[0]
   data2= connect.execute("SELECT dureePartie FROM parametres;")
-  data2= data2.fetchone()
+  data2= data2.fetchone()[0]
   connect.close()
   print('Detecting sound...')
   L=[]

@@ -36,9 +36,9 @@ async def main(schema_aleatoire:list[int]):
         await asyncio.sleep(dureeIntervalle)
     return schema_aleatoire
 
-def run():
+def run(schema_aleatoire:list[int]):
     """a utiliser pour executer main()"""
-    asyncio.run(main())
+    asyncio.run(main(schema_aleatoire))
 
 if __name__ == '__main__':
     asyncio.run(main())

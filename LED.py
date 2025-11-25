@@ -1,6 +1,7 @@
 ### BRANCHER SUT LE PORT 12 DU BASE HAT
 ### https://wiki.seeedstudio.com/Grove-Red_LED/
 from grove.gpio import GPIO
+import sqlite3
 
 class GroveLed(GPIO):
     def __init__(self,pin):
@@ -15,7 +16,9 @@ class GroveLed(GPIO):
 
 Grove = GroveLed
 pin=12
-taux_interpolation = 0.1
+connect = sqlite3.connect("singonlight.db")
+dureeIntervalle = connect.execute("SELECT valeur FROM parametres WHERE cle = dureeIntervalle;").fetchone()[0]
+connect.close()
 
 def main(schema_aleatoire:list[int]):
     import time
@@ -27,7 +30,7 @@ def main(schema_aleatoire:list[int]):
             led.on()
         elif schema_aleatoire[i] == 0:
             led.off()
-        time.sleep(taux_interpolation)
+        time.sleep(dureeIntervalle)
     return schema_aleatoire
 
 

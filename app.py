@@ -11,6 +11,7 @@ import time
 from random import randint
 import SoundSensor as Sound
 import LED
+import numpy as np
 
 @asynccontextmanager # gestion du cycle de vie de l'application (onstartup/shutdown)
 async def lifespan(app : FastAPI):
@@ -52,6 +53,7 @@ def main(request:Request):
 
 @app.get("/play.html")
 def play(request:Request) -> str:
+    """ récupère les paramètres de la partie depuis la base de données et les envoie à la page play.html """
     connect = sqlite3.connect("singonlight.db")
     dureeIntervalle = connect.execute('SELECT valeur FROM parametres WHERE cle="dureeIntervalle";').fetchone()[0]
     dureePartie = connect.execute('SELECT valeur FROM parametres WHERE cle="dureePartie";').fetchone()[0]
@@ -61,6 +63,7 @@ def play(request:Request) -> str:
 
 @app.get("/data.html")
 def data(request:Request) -> str:
+    """ récupère les scores depuis la base de données et les envoie à la page data.html """
     connect = sqlite3.connect('singonlight.db')
     scores = connect.execute('SELECT * FROM scores;').fetchall()
     connect.close()
@@ -74,6 +77,7 @@ def data(request:Request) -> str:
 
 @app.get("/calibration.html")
 def calibration(request:Request) -> str:
+    """ récupère le seuil de calibration depuis la base de données et l'envoie à la page calibration.html """
     connect = sqlite3.connect('singonlight.db')
     seuil = connect.execute('SELECT valeur FROM parametres WHERE cle="seuil";').fetchone()[0]
     connect.close()
@@ -110,9 +114,12 @@ async def run_play(request:Request):
     save_param_jouer(dureeIntervalle, dureePartie)
     rythme = generation_rythme(int(dureePartie))
     ### combiner Sound et LED dans la même fonction
-    res = await Sound.main() # resultat du capteur son (liste de volumes)
-    await LED.main(rythme) # allume la led selon le rythme
-    #await asyncio.sleep(int(dureeIntervalle*dureePartie)+1)
+
+    res, _ = await asyncio.gather(
+        Sound.main(),   # retourne la liste des volumes
+        LED.main(rythme)  # allume les LED selon le rythme
+    )
+
     print(res)
     print("fin de partie")
     print("son (" + str(len(res))+"): " + str(res))
@@ -128,14 +135,14 @@ async def run_play(request:Request):
 
     return f"La partie est terminée" 
     
-async transformation_signal(lst_partie):
+def transformation_signal(lst_partie):
     n = 3
     lst_signal = []
-    for i in range
+    #for i in range
     lst_res = []
     for i in range(len(3,lst_partie)):
         lst_res.append(lst_partie[i-3:i])
-        med = np.mediane(liste_res)
+        med = np.median(lst_res)
         if lst_partie[i] > med :
             lst_signal
 
@@ -155,13 +162,10 @@ def generation_rythme(longueur) -> list:
         signal.append(randint(0, 1))
     return signal
 
-def transformer_signal_audio(signal_audio, seuil):
-    """Transforme un signal audio en une liste binaire en fonction d'un seuil donné."""
-    pass  # Implémentation à venir
-
 # a appeler en fin de partie
 def enregistrer_score(score_obtenu):
-    """Enregistre le score obtenu dans la base de données.
+    """
+    Enregistre le score obtenu dans la base de données.
     Args:
         score_obtenu (int): Le score obtenu par le joueur (entre 0 et 100).
     """

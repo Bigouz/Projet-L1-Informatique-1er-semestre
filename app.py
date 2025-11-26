@@ -108,14 +108,12 @@ async def run_play(request:Request):
     dureePartie = body.get("dureePartie",25)
     #dureeTotale = dureeIntervalle*dureePartie
     save_param_jouer(dureeIntervalle, dureePartie)
-    asyncio.run(run_play2(dureeIntervalle,dureePartie))
-    return f"la partie a commencé",
-    
-async def run_play2(dureeIntervalle,dureePartie):
     rythme = generation_rythme(int(dureePartie))
-    res = Sound.run() # resultat du capteur son (liste de volumes)
-    LED.run(rythme) # allume la led selon le rythme
-    await asyncio.sleep(int(dureeIntervalle*dureePartie)+1)
+    ### combiner Sound et LED dans la même fonction
+    res = await Sound.main() # resultat du capteur son (liste de volumes)
+    await LED.main(rythme) # allume la led selon le rythme
+    #await asyncio.sleep(int(dureeIntervalle*dureePartie)+1)
+    print(res)
     print("fin de partie")
     print("son (" + str(len(res))+"): " + str(res))
     print("led (" + str(len(rythme))+"): " + str(rythme))
@@ -127,13 +125,8 @@ async def run_play2(dureeIntervalle,dureePartie):
     enregistrer_score(pourcentage)
     
     ### afficher le pourcentage de réussite ici
-    
-    """for i in range(dureeTotale):
-        time.sleep(60)
-        dureeTotale-=1
-        """ ### A MODIFIER POUR VISUALISER LE TEMPS QUI S'ECOULE (TESTS)
 
-    return f"La partie est terminée" # \n Temps restant de la partie: {dureePartie} \n Temps restant de l'intervalle: {dureeIntervalle} \n Temps total restant: {dureeTotale}
+    return f"La partie est terminée" 
 
 
 @app.post("/reset_data")

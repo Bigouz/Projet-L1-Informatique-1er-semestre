@@ -24,7 +24,6 @@ def seuil(bruit):
   liste_calibrage = []
   for i in range (2):
     n_ambiant = 5 # durée en seconde définit par l'utilisateur dans les paramètre
-    l = []
     print(phrase_calibrage)
     time.sleep(5)
     for i in range(3,0,-1):
@@ -33,7 +32,7 @@ def seuil(bruit):
     print(phrase_commence)
     start = time.time()
     while time.time() - start<n:
-      l.append(sound.main())
+      l = np.array(sound.run())
     S = np.sqrt(np.mean(l**2)) # Calculer le Seuil bas
     liste_calibrage.append(S)
     print(phrase_fin)

@@ -123,7 +123,7 @@ async def run_play2(dureeIntervalle,dureePartie):
     ### appeler les fonctions pour transformer 
     ### la liste en liste de 0 et 1 ici
     
-    pourcentage = score.calculer_pourcentage(rythme, res)
+    pourcentage = score.calculerPourcentage(rythme, res)
     enregistrer_score(pourcentage)
     
     ### afficher le pourcentage de réussite ici

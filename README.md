@@ -11,9 +11,9 @@ Introduction
 
 L’idée générale de Sing On Light est de divertir des plus jeunes aux plus vieux en créant un mini-jeu amusant et compétitif afin d’atteindre un public large et universel afin de les amuser avec un jeu de rythme, compréhensible par tous. 
 
-Cette idée s’inspire de multiples mini-jeux créés par la société Nintendo, dont l’influence est mondiale et qui a pu rapprocher enfants et adultes autour de jeux basés sur le son. Le projet fait appel à une Raspberry Pi ainsi que deux capteurs sonores Grove et un LCD. 
+Cette idée s’inspire de multiples mini-jeux créés par la société Nintendo, dont l’influence est mondiale et qui a pu rapprocher enfants et adultes autour de jeux basés sur le son. Le projet fait appel à une Raspberry Pi ainsi que deux capteurs sonores Grove et une LED. 
 
-Le but est simple, le LCD clignotera selon un rythme déterminé aléatoirement pendant un certain temps, puis pendant ce même lapse de temps l'utilisateur devra reproduire le rythme du LCD à l'aide de sa voix. 
+Le but est simple, la LED clignotera selon un rythme déterminé aléatoirement pendant un certain temps, puis pendant ce même lapse de temps l'utilisateur devra reproduire le rythme de la LED à l'aide de sa voix. 
 
 À la fin de chaque session, l'utilisateur sera informé du pourcentage de réussite qu'il a obtenu; si ce dernier est en dessous d'un pourcentage choisi en paramètre alors c'est perdu. Le score total est alors renvoyé sur le site web associé à notre mini-jeu (à savoir le nombre de sessions réussies et le taux moyen de réussite).
 
@@ -29,9 +29,9 @@ Schéma général du projet
 
 Le dispositif sera composé de :
 
-Deux capteurs sons (Grove sound sensor)
-Un Raspberry Pi 4 Computer Model B, 2 GB de RAM
-Un écran Grove-LCD RGB Backlight Grove-LCD RGB Backlight V4.0
+- Deux capteurs sons (Grove sound sensor)
+- Un Raspberry Pi 4 Computer Model B, 2 GB de RAM
+- Une LED Rouge
 
 Les données recueillies seront stockées dans une base de données. Ces données seront notamment accessibles depuis notre site, dans l’onglet “Données”. L’humain utilisera notre site comme intermédiaire, notamment afin de lancer une nouvelle partie et inspecter les données relatives au jeu mais interviendra aussi en utilisant un système sonore pour pouvoir jouer au mini-jeu.
 

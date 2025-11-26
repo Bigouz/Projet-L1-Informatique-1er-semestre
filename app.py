@@ -127,7 +127,17 @@ async def run_play(request:Request):
     ### afficher le pourcentage de réussite ici
 
     return f"La partie est terminée" 
-
+    
+async transformation_signal(lst_partie):
+    n = 3
+    lst_signal = []
+    for i in range
+    lst_res = []
+    for i in range(len(3,lst_partie)):
+        lst_res.append(lst_partie[i-3:i])
+        med = np.mediane(liste_res)
+        if lst_partie[i] > med :
+            lst_signal
 
 @app.post("/reset_data")
 async def reset_data(request:Request):

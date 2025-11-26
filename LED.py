@@ -34,6 +34,7 @@ async def main(schema_aleatoire:list[int]):
             led.off()
         
         await asyncio.sleep(dureeIntervalle)
+    led.off()
     return schema_aleatoire
 
 def run(schema_aleatoire:list[int]):
@@ -42,4 +43,5 @@ def run(schema_aleatoire:list[int]):
 
 if __name__ == '__main__':
     asyncio.run(main())
+
 

@@ -115,7 +115,7 @@ async def run_play(request:Request):
     #dureeTotale = dureeIntervalle*dureePartie
     save_param_jouer(dureeIntervalle, dureePartie)
     rythme = generation_rythme(int(dureePartie))
-    ### combiner Sound et LED dans la même fonction
+
     global start_event
     start_event = asyncio.Event()
     sound_task = asyncio.create_task(Sound.main(start_event))

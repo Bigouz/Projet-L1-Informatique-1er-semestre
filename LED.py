@@ -21,9 +21,9 @@ connect = sqlite3.connect("singonlight.db")
 dureeIntervalle = connect.execute("SELECT valeur FROM parametres WHERE cle = 'dureeIntervalle';").fetchone()[0]
 connect.close()
 
-async def main(schema_aleatoire:list[int]):
+async def main(schema_aleatoire:list[int],start_event):
     """utiliser LED.run() a la place car c'edt une fonction async. """
-    import time
+    await start_event.wait()
 
     led = GroveLed(pin)
 

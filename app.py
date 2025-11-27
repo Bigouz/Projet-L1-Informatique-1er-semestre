@@ -12,6 +12,8 @@ from random import randint
 import SoundSensor as Sound
 import LED
 import numpy as np
+start_event = asyncio.Event()
+
 
 @asynccontextmanager # gestion du cycle de vie de l'application (onstartup/shutdown)
 async def lifespan(app : FastAPI):
@@ -114,11 +116,15 @@ async def run_play(request:Request):
     save_param_jouer(dureeIntervalle, dureePartie)
     rythme = generation_rythme(int(dureePartie))
     ### combiner Sound et LED dans la même fonction
+    global start_event
+    start_event = asyncio.Event()
+    sound_task = asyncio.create_task(Sound.main(start_event))
+    led_task = asyncio.create_task(LED.main(rythme, start_event))
+    
+    start_event.set()
 
-    res, _ = await asyncio.gather(
-        Sound.main(),   # retourne la liste des volumes
-        LED.main(rythme)  # allume les LED selon le rythme
-    )
+    res = await sound_task
+    await led_task
 
     print(res)
     print("fin de partie")

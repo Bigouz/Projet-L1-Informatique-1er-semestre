@@ -21,26 +21,61 @@
             <p>La calibration permet de régler la sensibilité des capteurs sonores.
             </br>Il est conseillé de faire cette étape à chaque changement d'environnement sonore.
             <br><br>
-            <label for="seuil">Seuil : </label>
-            <input type="number" name="seuil" id="seuil" placeholder="Seuil" min="30" max="750" step="1" value="{{seuil}}" oninput="this.value=this.value.replace(/[^0-9]/g,''); if(this.value<30)this.value=30; if(this.value>750)this.value=750;">
-            <button class="calibrateBTN" onclick="calibrate()">Calibrer</button>
-            <br><br>
+            <div id="calibrations" style="position: relative;left: 50%;transform: translate(-50%, 0%); justify-self: first baseline;">
+                <div class="container" style="display:inline-block;vertical-align: top; min-height: 10rem; text-align: center;">
+                    <h3>Calibration manuelle</h3>
+                    <label for="seuil">Seuil: </label>
+                    <input type="number" name="seuil" id="seuil" placeholder="Seuil" min="30" max="750" step="1" value="{{seuil}}" onchange="this.value=this.value.replace(/[^0-9]/g,''); if(this.value<30)this.value=30; if(this.value>750)this.value=750;"><br>
+                    <button class="calibrateBTN" id="cal_man_btn" onclick="calibrate()">Calibrer</button>
+                    <br><br>
+                </div>
+                <div class="container" style="display:inline-block;vertical-align: top; min-height: 10rem; text-align: center;">
+                    <h3>Calibration automatique</h3>
+                    <br>
+                    <button class="calibrateBTN" onclick="auto_calibrate()">Calibration automatique</button>
+                    <br><br>
+                </div>
+                
+            </div>
+            <div id="log" style="text-align: center;"></div>
             <p style="color:lime;" id="result">{{message}}</p>
             </p>
-            <script>
-            async function calibrate() {
-                const seuil = parseInt(document.getElementById('seuil').value);
-                
-                // Send parameters via POST with JSON body
-                const response = await fetch('/run-calibrate', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({"seuil":seuil})
-                });
 
-                const data = await response.json();
-                document.getElementById('result').innerText = data;
-            }
+
+            <script>
+                const ws = new WebSocket("ws://localhost:8000/ws");
+
+                ws.onmessage = function(event) {
+                    const log = document.getElementById('log');
+                    log.innerHTML += event.data + '<br>';
+                    log.scrollTop = log.scrollHeight;
+                };
+
+                async function calibrate() {
+                    const seuil = parseInt(document.getElementById('seuil').value);
+                    
+                    const response = await fetch('/run-calibrate', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({"seuil":seuil})
+                    });
+
+                    const data = await response.json();
+                    document.getElementById('result').innerText = data;
+                }
+
+                async function auto_calibrate() {
+                    document.getElementById('log').innerHTML = "";
+                    document.getElementById('result').innerText = "";
+                    document.getElementById('cal_man_btn').disabled = true;
+                    const response = await fetch('/run-auto-calibrate', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'}
+                    });
+
+                    const data = await response.json();
+                    document.getElementById('result').innerText = data;
+                }
         </script>
 
         </div>

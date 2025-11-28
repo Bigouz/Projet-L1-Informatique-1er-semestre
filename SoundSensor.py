@@ -1,9 +1,9 @@
 ### BRANCHER EN A0
 ### https://wiki.seeedstudio.com/Grove-Sound_Sensor/
-import time
 from grove.adc import ADC
 import sqlite3
 import asyncio
+from ws_manager import broadcast
 
 __all__ = ['GroveSensorSound']
 
@@ -22,8 +22,6 @@ Grove = GroveSoundSensor
 
 async def main(start_event):
   await start_event.wait()
-  from grove.helper import SlotHelper
-  sh = SlotHelper(SlotHelper.ADC)
   pin = 0
 
   sensor = GroveSoundSensor(pin)
@@ -43,9 +41,36 @@ async def main(start_event):
       await asyncio.sleep(taux_interpolation)
   return L
 
-def run():
-  """ a utiliser pour executer main"""
-  return asyncio.run(main())
+
+async def calibrage(n):
+    """
+    n = durée en secondes
+    Renvoie le seuil bas du son ambiant
+    """
+    pin = 0
+
+    sensor = GroveSoundSensor(pin)
+    taux_interpolation = 0.1
+
+    await broadcast("Veuillez ne pas faire de bruit durant le calibrage du son ambiant")
+    print("Veuillez ne pas faire de bruit durant le calibrage du son ambiant")
+    await asyncio.sleep(5)
+    for i in range(3,0,-1):
+        await broadcast("Le calibrage commence dans " + str(i) + " secondes")
+        print("Le calibrage commence dans ",i," secondes")
+        await asyncio.sleep(1)
+    await broadcast("Calibrage du son ambiant en cours... Veuillez rester silencieux.")
+    print("Silence")
+    L = []
+    for _ in range(int(n*(1/taux_interpolation))):
+        L.append(sensor.sound)
+        await asyncio.sleep(taux_interpolation)
+    S = (sum(x**2 for x in L)/len(L))**0.5 # Calcul du Seuil bas
+    await broadcast("Calibrage du son ambiant terminé. (" + str(S) + ")")
+    print("Calibrage du son ambiant terminé")
+    return S
+
+
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

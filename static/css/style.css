@@ -89,6 +89,11 @@ button:hover{
     cursor: pointer;
 }
 
+button:disabled{
+    background-color: #555b6e;
+    cursor: not-allowed;
+}
+
 button.red{
     background-color: #da7272;
     cursor: pointer;

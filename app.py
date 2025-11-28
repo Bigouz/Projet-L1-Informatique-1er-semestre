@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, BackgroundTasks
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -7,11 +7,17 @@ import asyncio
 from contextlib import asynccontextmanager
 import sqlite3
 import score as score
-import time
 from random import randint
+from ws_manager import active_connections, broadcast
+
+### pour tester du code sans le raspberry PI, on peut commenter l'import de SoundSensor et LED.
 import SoundSensor as Sound
 import LED
-import numpy as np
+
+### pour tester les messages Websockets sans raspberry PI, décommenter la ligne suivante.
+#import test as Sound
+
+
 start_event = asyncio.Event()
 
 
@@ -41,6 +47,9 @@ async def lifespan(app : FastAPI):
     print("Base de données initialisée.")
     yield
     # Code à exécuter à l'arrêt de l'application
+    if len(active_connections) > 0:
+        await broadcast("Le serveur va s'arrêter. Déconnexion...")
+        active_connections.clear()
     pass
 
 #print(score.calculer([1,0,1,1,0,0,1],[0,1,1,1,0,0,1])) # Test de la fonction de calcul du score
@@ -99,6 +108,34 @@ async def run_calibrate(request:Request):
     result = save_calibration(int(seuil))
     return "Calibration sauvegardée."
 
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    """ gère les connexions WebSocket (1) """
+    await websocket.accept()
+    active_connections.append(websocket)
+    try:
+        while True:
+            await websocket.receive_text()
+    except Exception as e:
+        print("WebSocket disconnected:", e)
+    finally:
+        active_connections.remove(websocket)
+
+@app.post("/run-auto-calibrate")
+async def run_auto_calibrate(request:Request):
+    """ appelé quand l'utilisateur appuie sur le bouton de calibration automatique """
+    n=10
+
+    seuil = asyncio.create_task(Sound.calibrage(n))
+    result = await seuil
+    if result < 30:
+        result = 30
+    elif result > 750:
+        result = 750
+    print("Nouveau seuil calibré :", result)
+    save_calibration(int(result))
+    return "La calibration automatique est terminée."
+
 def save_param_jouer(dureeIntervalle:int, dureePartie:int):
     connect = sqlite3.connect('singonlight.db')
     connect.execute('UPDATE parametres set valeur=(?) WHERE cle="dureeIntervalle";', (dureeIntervalle,))
@@ -152,7 +189,7 @@ def transformation_signal_moyenne(signal,dureeIntervalle):
     signal_compr = []
     n = int(dureeIntervalle/taux)
     for i in range(0,len(signal_bin),n):
-        signal_compr.append(sum(signal_bin[i:i+n])/n)
+        signal_compr.append(sum(L[i:i+n])/n)
     signal_fin = []
     for s in signal_compr:
         if s >= 0.5:
@@ -161,17 +198,17 @@ def transformation_signal_moyenne(signal,dureeIntervalle):
             signal_fin.append(0)
     return signal_fin
         
-    
-def transformation_signal(lst_partie):
-    n = 3
-    lst_signal = []
-    #for i in range
-    lst_res = []
-    for i in range(len(3,lst_partie)):
-        lst_res.append(lst_partie[i-3:i])
-        med = np.median(lst_res)
-        if lst_partie[i] > med :
-            lst_signal
+   
+#def transformation_signal(lst_partie):
+#    n = 3
+#    lst_signal = []
+#    for i in range
+#    lst_res = []
+#    for i in range(len(3,lst_partie)):
+#        lst_res.append(lst_partie[i-3:i])
+#        med = np.median(lst_res)
+#        if lst_partie[i] > med :
+#            lst_signal
 
 @app.post("/reset_data")
 async def reset_data(request:Request):
@@ -206,7 +243,6 @@ def enregistrer_score(score_obtenu):
     connect.execute('UPDATE scores SET occurence=? WHERE intervalleScore=?;', (nouvelle_occurence, str(intervalle)))
     connect.commit()
     connect.close()
-
 
 if __name__ == "__main__":
     uvicorn.run(app) # lancement du serveur HTTP + WSGI avec les options de debug

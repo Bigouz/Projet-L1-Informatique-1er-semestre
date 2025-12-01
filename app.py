@@ -158,7 +158,7 @@ async def run_play(request:Request):
 
     global start_event
     start_event = asyncio.Event()
-    sound_task = asyncio.create_task(Sound.main(start_event))
+    sound_task = asyncio.create_task(Sound.main(start_event,rythme))
     #led_task = asyncio.create_task(LED.main(rythme, start_event))
     
     start_event.set()

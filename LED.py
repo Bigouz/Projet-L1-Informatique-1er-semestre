@@ -36,7 +36,15 @@ async def main(schema_aleatoire:list[int],start_event):
         await asyncio.sleep(dureeIntervalle)
     led.off()
     return schema_aleatoire
-
+    
+led = GroveLed(pin)
+def change_state(rythme,i):
+    if rythme[i] == 1:
+        led.on()
+    else:
+        led.off()
+    return rythme
+    
 def run(schema_aleatoire:list[int]):
     """a utiliser pour executer main()"""
     return asyncio.run(main(schema_aleatoire))

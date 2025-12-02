@@ -55,6 +55,7 @@ a:hover{
 h1{
     color: #7289da;
     text-align: center;
+    text-shadow: #000000 1px 1px 2px;
 }
 
 p, h2{
@@ -115,14 +116,32 @@ input[type="number"]::-webkit-outer-spin-button {
     border-radius: 10px;
     padding: 10px;
     margin-bottom: 20px;
-    box-shadow: #000000 0px 4px 12px, inset 1px 1px #ffffff30;
+    box-shadow: inset #000000 0px 4px 12px, 1px 1px #ffffff30;
     width: fit-content;
+    position: relative;left: 50%;transform: translate(-50%, 0%);
+    text-align: center;
+}
+
+.container:has(> h3){ /* Pour tous les containers ayant un h3 (les containers de la calibration) */
+    position: unset;
+    left: unset;
+    transform: unset;
+}
+
+#calibrations{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.container:hover{
+    box-shadow: #000000 0px 4px 12px, inset 1px 1px #ffffff30;
 }
 
 h2{
     text-shadow: #000000 1px 1px 2px;
-    text-decoration: underline;
-    text-decoration-color: #92a7f4;
+    color: #92a7f4;
 }
 
 

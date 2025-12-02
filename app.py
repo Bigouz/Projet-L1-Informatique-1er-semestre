@@ -17,10 +17,6 @@ import LED
 ### pour tester les messages Websockets sans raspberry PI, décommenter la ligne suivante.
 #import test as Sound
 
-
-condition = asyncio.Condition()
-sound_counter = 0
-
 start_event = asyncio.Event()
 
 

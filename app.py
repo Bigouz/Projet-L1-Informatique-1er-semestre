@@ -167,7 +167,7 @@ async def run_play(request:Request):
     print("son (" + str(len(res))+"): " + str(res))
     print("led (" + str(len(rythme))+"): " + str(rythme))
     
-    signal = transformation_signal_moyenne(rythme,dureeIntervalle)
+    signal = transformation_signal_moyenne(res,dureeIntervalle)
     print(res, "=>", signal)
     pourcentage = score.calculerPourcentage(rythme, signal)
     enregistrer_score(pourcentage)

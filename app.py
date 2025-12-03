@@ -174,8 +174,8 @@ async def run_play(request:Request):
     print(str(pourcentage) + "%")
     
     if pourcentage >= 50:
-        return "Vous avez gagné avec un score de " + pourcentage + "%"
-    return "Vous avez perdu avec un score de " + pourcentage + "%"
+        return "Vous avez gagné avec un score de " + str(pourcentage) + "%"
+    return "Vous avez perdu avec un score de " + str(pourcentage) + "%"
 
 def transformation_signal_moyenne(signal,dureeIntervalle):
     connect = sqlite3.connect("singonlight.db")
@@ -232,7 +232,7 @@ def enregistrer_score(score_obtenu):
     Args:
         score_obtenu (int): Le score obtenu par le joueur (entre 0 et 100).
     """
-    intervalle = (score_obtenu // 10) * 10  # Déterminer l'intervalle de score (0-10, 11-20, ..., 91-100)
+    intervalle = int((score_obtenu // 10) * 10)  # Déterminer l'intervalle de score (0-10, 11-20, ..., 91-100)
     connect = sqlite3.connect('singonlight.db')
     # Récupérer l'occurence actuelle pour le score_obtenu
     occurence_actuelle = connect.execute('SELECT occurence FROM scores WHERE intervalleScore=?;', (str(intervalle),)).fetchone()[0]

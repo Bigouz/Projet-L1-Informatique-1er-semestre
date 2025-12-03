@@ -31,8 +31,7 @@
 
                 <label for="dureePartie">Durée de la partie (en intervalles) : </label>
                 <input type="number" name="dureePartie" id="dureePartie" value="{{dureePartie}}" max="120" min="5" onchange="this.value=this.value.replace(/[^0-9]/g,''); if(this.value<5)this.value=5; if(this.value>120)this.value=120;temps_total()" ><br><br>
-                <button class="1 jouer" onclick="save_param()">1 Joueur</button> 
-                <button class="2 joueurs" onclick="save_param()">2 joueur</button>
+            
                 <br><br>
                 <span id="temps_total"> </span><br>
                 <button class="start" onclick="save_param()">Jouer</button>
@@ -85,6 +84,7 @@
 <link rel="stylesheet" href="static/css/style.css">
 </body>
 </html>
+
 
 
 

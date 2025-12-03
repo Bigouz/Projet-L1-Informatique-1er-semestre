@@ -121,11 +121,20 @@ input[type="number"]::-webkit-outer-spin-button {
     position: relative;
     left: 50%;
     transform: translate(-50%, 0%);
-    -webkit-transform: translate(-50%, 0%);;
+    -webkit-transform: translate(-50%, 0%);
     text-align: center;
 }
 
-.container:has(> h3){ /* Pour tous les containers ayant un h3 (les containers de la calibration) */
+.container2 {
+    background-color: #1e2124;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-shadow: inset #000000 0px 4px 12px, 1px 1px #ffffff30;
+    width: fit-content;
+    position: relative;
+    left: 50%;
+    text-align: center;
     position: unset;
     left: unset;
     transform: unset;

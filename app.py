@@ -11,11 +11,11 @@ from random import randint
 from ws_manager import active_connections, broadcast
 
 ### pour tester du code sans le raspberry PI, on peut commenter l'import de SoundSensor et LED.
-#import SoundSensor as Sound
-#import LED
+import SoundSensor as Sound
+import LED
 
 ### pour tester les messages Websockets sans raspberry PI, décommenter la ligne suivante.
-import test as Sound
+#import test as Sound
 
 start_event = asyncio.Event()
 

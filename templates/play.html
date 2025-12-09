@@ -8,7 +8,7 @@
     <div class="div1">
         <div class = "div1a">
             <a class="indexBTN" href="/">Menu Principal</a><br>
-            <a class="playBTN" id="currentBTN" href="/play.html">Jouer</a><br>
+            <a class="playBTN" id="currentBTN" href="/Mode.html">Jouer</a><br>
             <a class="calibrationBTN" href="/calibration.html">Calibration</a><br>
             <a class="dataBTN" href="/data.html">Données</a><br>
             <a href="https://github.com/Bigouz/Projet-L1-Informatique-1er-semestre" target="_blank" class="github">GitHub</a>
@@ -42,6 +42,8 @@
             <br><br>
             <p style="color: lime;" id="result">{{message}}</p>
             </p>
+            <br><br>
+            <p id="temps"></p>
             
             <script>
                 function change_value(t){
@@ -65,6 +67,14 @@
 
 
             async function save_param() {
+                document.getELementById("temps").innerText = "La partie commence dans 3 secondes.";
+                await 1;
+                document.getELementById("temps").innerText = "La partie commence dans 2 secondes.";
+                await 1;
+                document.getELementById("temps").innerText = "La partie commence dans 1 secondes.";
+                await 1;
+                document.getELementById("temps").innerText = "";
+                
                 const dureeIntervalle = parseFloat(document.getElementById('dureeIntervalle').value);
                 const dureePartie = parseInt(document.getElementById('dureePartie').value);
 
@@ -89,6 +99,7 @@
 <link rel="stylesheet" href="static/css/style.css">
 </body>
 </html>
+
 
 
 

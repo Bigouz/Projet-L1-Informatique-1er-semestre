@@ -65,14 +65,14 @@
                 }
                 temps_total()
 
-
+            const delay = ms => new Promise(res => setTimeout(res, ms));
             async function save_param() {
                 document.getElementById("temps").innerText = "La partie commence dans 3 secondes.";
-                await 1;
+                await delay(1000);
                 document.getElementById("temps").innerText = "La partie commence dans 2 secondes.";
-                await 1;
+                await delay(1000);
                 document.getElementById("temps").innerText = "La partie commence dans 1 secondes.";
-                await 1;
+                await delay(1000);
                 document.getElementById("temps").innerText = "";
                 
                 const dureeIntervalle = parseFloat(document.getElementById('dureeIntervalle').value);
@@ -99,6 +99,7 @@
 <link rel="stylesheet" href="static/css/style.css">
 </body>
 </html>
+
 
 
 

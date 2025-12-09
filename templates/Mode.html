@@ -22,56 +22,11 @@
         
             <br>
             <div class="container" style="min-width: 640px;">
-    
-  
-
-    
-                <button class="joueur" onclick="save_param()">Solo</button> 
-                <button class="joueur" onclick="save_param()">Multijoueurs</button>
-            </div>
-            
-            
-            <br><br>
-            <p style="color: lime;" id="result">{{message}}</p>
-            </p>
-            
+                <a class="joueur" href="/play.html">Solo</a> 
+                <a class="joueur" href="/play_multijoueur.html">Multijoueurs</a>
+            </div>      
             <script>
-                function change_value(t){
-                    t.value = t.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
-                    let v = parseFloat(t.value);
-                    if (isNaN(v)) v = 0.1;
-                    if (v < 0.1) v = 0.1;
-                    if (v > 2.0) v = 2.0;
-                    // arrondi au pas de 0.1
-                    v = Math.round(v * 10) / 10;
-                    t.value = v.toFixed(1);
-                }
             
-            
-                function temps_total(){
-                    let temps = Math.round(document.getElementById("dureePartie").value * document.getElementById("dureeIntervalle").value);
-                    document.getElementById("temps_total").innerHTML = "Temps total de la partie : " + temps + " secondes";
-                    return temps;
-                }
-                temps_total()
-
-
-            async function save_param() {
-                const dureeIntervalle = parseFloat(document.getElementById('dureeIntervalle').value);
-                const dureePartie = parseInt(document.getElementById('dureePartie').value);
-                const nom_1 = (document.getElementById('nom_1').value);
-                const nom_2 = (document.getElementById('nom_2').value);
-
-                
-                // Send parameters via POST with JSON body
-                const response = await fetch('/run_play', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({"dureeIntervalle":dureeIntervalle, "dureePartie":dureePartie})
-                });
-                const data = await response.json();
-                document.getElementById('result').innerText = data;
-            }
         </script>
         </div>
     </div>

@@ -168,6 +168,15 @@ h2{
     color: #92a7f4;
 }
 
+a.joueur{
+    text-decoration: unset;
+    background-color: #5b6eae;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    line-height: 50px;
+    
+}
 
 /* Styles for Highcharts */
 #container {

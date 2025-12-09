@@ -64,7 +64,17 @@ def main(request:Request):
 
 @app.get("/Mode.html")
 def mode(request:Request):
-    return templates.TemplateResponse('Mode.html',{})
+    return templates.TemplateResponse('Mode.html',{"request":request})
+
+@app.get("/play_multijoueur.html")
+def play_mult(request:Request) -> str:
+    """ récupère les paramètres de la partie depuis la base de données et les envoie à la page play.html """
+    connect = sqlite3.connect("singonlight.db")
+    dureeIntervalle = connect.execute('SELECT valeur FROM parametres WHERE cle="dureeIntervalle";').fetchone()[0]
+    dureePartie = connect.execute('SELECT valeur FROM parametres WHERE cle="dureePartie";').fetchone()[0]
+    connect.close()
+
+    return templates.TemplateResponse('play_multijoueur.html',{'request': request,'dureeIntervalle':dureeIntervalle, "dureePartie":dureePartie})
 
 @app.get("/play.html")
 def play(request:Request) -> str:

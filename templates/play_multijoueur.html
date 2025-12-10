@@ -41,8 +41,10 @@
             
             
             <br><br>
-            <p style="color: rgb(0, 145, 255);" id="resultJ1">{{message}}</p>
-            <p style="color: rgb(0, 145, 255);" id="resultJ2">{{message}}</p>
+            <p style="color: rgb(0, 145, 255);" id="resultJ1"></p>
+            <p style="color: rgb(0, 145, 255);" id="resultJ2"></p>
+            <br>
+            <p style="color: rgb(0,255,0);" id="result"></p>
             </p>
             
             <script>
@@ -88,17 +90,39 @@
 
                 if (player == document.getElementById("J1")){
                     document.getElementById('resultJ1').innerText = texte + data["message"];
+                    pourcentage1 = data["pourcentage"]
                 } else {
                     document.getElementById('resultJ2').innerText = texte + data["message"];
+                    pourcentage2 = data["pourcentage"]
                 }
                 
-                document.getElementById("J1").disabled = false;
-                document.getElementById("J2").disabled = false;
+                if (document.getElementById("resultJ1").innerText == ""){
+                    document.getElementById("J1").disabled = false;
+                    }
+                if (document.getElementById("resultJ2").innerText == ""){
+                    document.getElementById("J2").disabled = false;
+                    }
+                
+                if (document.getElementById("resultJ1").innerText != "" && document.getElementById("resultJ2").innerText != ""){
+                    if (pourcentage1 > pourcentage2){
+                        document.getElementById("result").innerText = "Le Joueur 1 a gagné.";
+                        }
+                    if (pourcentage2 > pourcentage1){
+                        document.getElementById("result").innerText = "Le Joueur 2 a gagné."
+                        }
+                    if (pourcentage2 == pourcentage1){
+                        document.getElementById("result").innerText = "Egalité."
+                        }
+                        
+                    }
+                
                 player.disabled = true;
                 Grythme = data["rythme"]
             }
 
             var Grythme = -1;
+            var pourcentage1 = -1;
+            var pourcentage2 = -1;
         </script>
         </div>
     </div>

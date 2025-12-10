@@ -166,7 +166,7 @@ async def run_play_multi(request:Request):
     enregistrer_score(pourcentage)
     print(str(pourcentage) + "%")
     
-    return {"message":"a fini avec un score de " + str(pourcentage) + "%", "rythme": rythme}
+    return {"message":"a fini avec un score de " + str(pourcentage) + "%", "rythme": rythme, "pourcentage": pourcentage}
 
 @app.post("/run-auto-calibrate")
 async def run_auto_calibrate(request:Request):

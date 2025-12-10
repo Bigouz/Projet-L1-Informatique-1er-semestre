@@ -11,11 +11,11 @@ from random import randint
 from ws_manager import active_connections, broadcast
 
 ### pour tester du code sans le raspberry PI, on peut commenter l'import de SoundSensor et LED.
-#import SoundSensor as Sound
-#import LED
+import SoundSensor as Sound
+import LED
 
 ### pour tester les messages Websockets sans raspberry PI, décommenter la ligne suivante.
-import test as Sound
+#import test as Sound
 
 start_event = asyncio.Event()
 
@@ -142,9 +142,10 @@ async def run_play_multi(request:Request):
     body = await request.json()
     dureeIntervalle = body.get("dureeIntervalle",1)
     dureePartie = body.get("dureePartie",25)
-    rythme = body.get("rythme",None)
+    rythme = body.get("rythme",-1)
+    print(rythme)
     save_param_jouer(dureeIntervalle, dureePartie)
-    if rythme == None:
+    if rythme == -1:
         rythme = generation_rythme(int(dureePartie))
 
     global start_event
@@ -165,7 +166,7 @@ async def run_play_multi(request:Request):
     enregistrer_score(pourcentage)
     print(str(pourcentage) + "%")
     
-    return {"message":"a fini avec un score de " + str(pourcentage) + "% contre " + str(pourcentage1), "rythme": rythme}
+    return {"message":"a fini avec un score de " + str(pourcentage) + "%", "rythme": rythme}
 
 @app.post("/run-auto-calibrate")
 async def run_auto_calibrate(request:Request):

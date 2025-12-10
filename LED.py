@@ -22,7 +22,7 @@ dureeIntervalle = connect.execute("SELECT valeur FROM parametres WHERE cle = 'du
 connect.close()
 
 async def main(schema_aleatoire:list[int],start_event):
-    """utiliser LED.run() a la place car c'edt une fonction async. """
+    """utiliser LED.run() a la place car c'est une fonction async. """
     await start_event.wait()
 
     led = GroveLed(pin)
@@ -51,5 +51,6 @@ def run(schema_aleatoire:list[int]):
 
 if __name__ == '__main__':
     asyncio.run(main())
+
 
 

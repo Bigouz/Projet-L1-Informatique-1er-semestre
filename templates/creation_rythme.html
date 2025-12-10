@@ -36,16 +36,15 @@
                 
                 <fieldset>
                 <legend>Rythme</legend>
-                <label for="Int1"><input type="checkbox" id="intervalle1" name="whatever"></label>
-                <label for="Int2"></label><input type="checkbox" id="intervalle2" name="whatever"></label>
-                <label for="Int3"></label><input type="checkbox" id="intervalle3" name="whatever"></label>
-                <label for="Int4"></label><input type="checkbox" id="intervalle4" name="whatever"></label>
+                <label for="Int1"><input type="checkbox" id="intervalle1" name="Int1"></label>
+                <label for="Int2"><input type="checkbox" id="intervalle2" name="Int2"></label>
+                <label for="Int3"><input type="checkbox" id="intervalle3" name="Int3"></label>
+                <label for="Int4"><input type="checkbox" id="intervalle4" name="Int4"></label>
                 </fieldset>
 
                 <br><br>
                 <span id="temps_total"> </span><br>
-                <button id="start" class="start" onclick="this.disabled = true;save_param()">Jouer</button>
-                <p id = "winstreak">🔥🔥🔥 Winstreak: {{winstreak}} 🔥🔥🔥 </p>
+                <button id="create" class="create" onclick=save_param(this);>Créer</button>
             </div>
             
             
@@ -77,13 +76,7 @@
 
             const delay = ms => new Promise(res => setTimeout(res, ms));
             async function save_param() {
-                document.getElementById("temps").innerText = "La partie commence dans 3 secondes.";
-                await delay(1000);
-                document.getElementById("temps").innerText = "La partie commence dans 2 secondes.";
-                await delay(1000);
-                document.getElementById("temps").innerText = "La partie commence dans 1 secondes.";
-                await delay(1000);
-                document.getElementById("temps").innerText = "";
+                document.getElementById("create").innerText = "Le rythme a été créé.";
                 
                 const dureeIntervalle = parseFloat(document.getElementById('dureeIntervalle').value);
                 const dureePartie = parseInt(document.getElementById('dureePartie').value);

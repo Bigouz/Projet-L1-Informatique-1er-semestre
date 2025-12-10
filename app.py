@@ -109,6 +109,12 @@ def calibration(request:Request) -> str:
     connect.close()
     return templates.TemplateResponse('calibration.html',{'request': request, 'seuil':int(seuil)})
 
+@app.get("/creation_rythme.html")
+def creation(request:Request) -> str:
+    connect = sqlite3.connect('singonlight.db')
+    connect.close()
+    return templates.TemplateResponse('creation_rythme.html',{'request': request})
+
 def save_calibration(seuil: int):
     connect = sqlite3.connect('singonlight.db')
     connect.execute('UPDATE parametres set valeur=(?) WHERE cle="seuil";', (seuil,))

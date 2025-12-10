@@ -33,7 +33,15 @@
 
                 <label for="dureePartie">Durée de la partie (en intervalles) : </label>
                 <input type="number" name="dureePartie" id="dureePartie" value="{{dureePartie}}" max="120" min="5" onchange="this.value=this.value.replace(/[^0-9]/g,''); if(this.value<5)this.value=5; if(this.value>120)this.value=120;temps_total()" ><br><br>
-            
+                
+                <fieldset>
+                <legend>Rythme</legend>
+                <label for="Int1"><input type="checkbox" id="intervalle1" name="whatever"></label>
+                <label for="Int2"></label><input type="checkbox" id="intervalle2" name="whatever"></label>
+                <label for="Int3"></label><input type="checkbox" id="intervalle3" name="whatever"></label>
+                <label for="Int4"></label><input type="checkbox" id="intervalle4" name="whatever"></label>
+                </fieldset>
+
                 <br><br>
                 <span id="temps_total"> </span><br>
                 <button id="start" class="start" onclick="this.disabled = true;save_param()">Jouer</button>

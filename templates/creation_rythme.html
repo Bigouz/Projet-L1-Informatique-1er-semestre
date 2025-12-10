@@ -28,30 +28,21 @@
                     <br>
                 <div class="container" style="min-width: 640px;">
                     <h2>Paramètres de la partie</h2>
-                    </br>Choisissez vos paramètres de jeu ci-dessous :
+                    </br>Choisissez vos paramètres pour le rythme ci-dessous :
                     <br><br>
-
-                    <label for="dureeIntervalle">Durée d'intervalles (en secondes) : </label>
-                    <input type="number" name="dureeIntervalle" id="dureeIntervalle" value="{{dureeIntervalle}}" max="2"
-                        min="0.1" step="0.1" onchange="change_value(this);temps_total()"><br>
 
                     <label for="dureePartie">Durée de la partie (en intervalles) : </label>
                     <input type="number" name="dureePartie" id="dureePartie" value="{{dureePartie}}" max="120" min="5"
-                        onchange="this.value=this.value.replace(/[^0-9]/g,''); if(this.value<5)this.value=5; if(this.value>120)this.value=120;temps_total()"><br><br>
-
+                        onchange="this.value=this.value.replace(/[^0-9]/g,''); if(this.value<5)this.value=5; if(this.value>120)this.value=120;creer_cases(this.value)"><br><br>
                     <fieldset>
                         <legend>Rythme</legend>
-                        <label for="intervalle1"><input type="checkbox" id="intervalle1" name="Int1"></label>
-                        <label for="intervalle2"><input type="checkbox" id="intervalle2" name="Int2"></label>
-                        <label for="intervalle3"><input type="checkbox" id="intervalle3" name="Int3"></label>
-                        <label for="intervalle4"><input type="checkbox" id="intervalle4" name="Int4"></label>
                     </fieldset>
 
                     <br><br>
                     <span id="temps_total"> </span><br>
                     <button id="create" class="create" onclick=save_param(this);>Créer</button>
                 </div>
-
+                <span id="rythme" style="opacity: 0;">{{rythme}}</span>
 
                 <br><br>
                 <p style="color: lime;" id="result">{{message}}</p>
@@ -60,6 +51,37 @@
                 <p id="temps"></p>
 
                 <script>
+
+                    function creer_cases(n) {
+                        const fieldset = document.querySelector("fieldset");
+                        fieldset.innerHTML = '<legend>Rythme</legend>';
+                        for (let i = 1; i <= n; i++) {
+                            const label = document.createElement("label");
+                            label.setAttribute("for", "intervalle" + i);
+                            const checkbox = document.createElement("input");
+                            checkbox.type = "checkbox";
+                            checkbox.id = "intervalle" + i;
+                            checkbox.name = "Int" + i;
+                            label.appendChild(checkbox);
+                            fieldset.appendChild(label);
+                        }
+                    }
+                    
+                    let rythme = document.getElementById("rythme").innerText;
+                    document.getElementById("dureePartie").value = Math.max(rythme.length,5);
+                    
+                    creer_cases(document.getElementById("dureePartie").value);
+
+                    console.log(rythme);
+                    for (let i = 0; i < rythme.length; i++) {
+                        if (rythme.charAt(i) === '1') {
+                            document.getElementById("intervalle" + (i + 1)).checked = true;
+                        } else {
+                            document.getElementById("intervalle" + (i + 1)).checked = false;
+                        }
+                    }
+
+
                     function change_value(t) {
                         t.value = t.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
                         let v = parseFloat(t.value);
@@ -71,26 +93,26 @@
                         t.value = v.toFixed(1);
                     }
 
-
-                    function temps_total() {
-                        let temps = Math.round(document.getElementById("dureePartie").value * document.getElementById("dureeIntervalle").value);
-                        document.getElementById("temps_total").innerHTML = "Temps total de la partie : " + temps + " secondes";
-                        return temps;
-                    }
-                    temps_total()
-
-                    const delay = ms => new Promise(res => setTimeout(res, ms));
-
                     async function save_param() {
                         document.getElementById("create").innerText = "Le rythme a été créé.";
 
-                        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-                        const values = Array.from(checkboxes).map(checkbox => checkbox.id);
-
-                        const response = await fetch('/run-creation_rythme', {
+                        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                        let values = Array.from(checkboxes).map(checkbox => checkbox.id);
+                        
+                        for (let i = 0; i < checkboxes.length; i++) {
+                            if (checkboxes[i].checked) {
+                                values[i] = 1;
+                            } else {
+                                values[i] = 0;
+                            }
+                        }
+                        console.log(values);
+                        values = values.join('');
+                        console.log(values);
+                        const response = await fetch('/run_creation_rythme', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ "values": values })
+                            body: JSON.stringify({ "rythme": values })
                         });
 
                     };

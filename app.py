@@ -45,7 +45,6 @@ def gen_bdd():
 
 @asynccontextmanager # gestion du cycle de vie de l'application (onstartup/shutdown)
 async def lifespan(app : FastAPI):
-    print("AAAAAAAAA")
     # Code à exécuter au démarrage de l'application
     # Initialisation de la base de données SQLite
     gen_bdd()
@@ -87,9 +86,10 @@ def play(request:Request) -> str:
     dureeIntervalle = connect.execute('SELECT valeur FROM parametres WHERE cle="dureeIntervalle";').fetchone()[0]
     dureePartie = connect.execute('SELECT valeur FROM parametres WHERE cle="dureePartie";').fetchone()[0]
     winstreak = connect.execute('SELECT valeur FROM parametres WHERE cle="winstreak";').fetchone()[0]
+    rythme = connect.execute('SELECT valeur FROM parametres WHERE cle="rythme";').fetchone()[0]
     connect.close()
-
-    return templates.TemplateResponse('play.html',{'request': request,'dureeIntervalle':dureeIntervalle, "dureePartie":dureePartie, "winstreak":winstreak})
+    longueur_rythme = len(str(rythme)) if rythme != -1 else 0
+    return templates.TemplateResponse('play.html',{'request': request,'dureeIntervalle':dureeIntervalle, "dureePartie":dureePartie, "winstreak":winstreak, "rythme":longueur_rythme})
 
 @app.get("/data.html")
 def data(request:Request) -> str:
@@ -202,8 +202,15 @@ async def run_play(request:Request):
     body = await request.json()
     dureeIntervalle = body.get("dureeIntervalle",1)
     dureePartie = body.get("dureePartie",25)
+    isRythme = body.get("isRythme",0)
+    if isRythme == 0:
+        rythme = generation_rythme(int(dureePartie))
+    else:
+        connect = sqlite3.connect('singonlight.db')
+        rythme = connect.execute("SELECT value FROM parametres WHERE cle='rythme';").fetchone()[0]
+        connect.close()
+    print(rythme)
     save_param_jouer(dureeIntervalle, dureePartie)
-    rythme = generation_rythme(int(dureePartie))
 
     global start_event
     start_event = asyncio.Event()
@@ -229,6 +236,22 @@ async def run_play(request:Request):
     w = reset_winstreak()
     return {"message": "Vous avez perdu avec un score de " + str(pourcentage) + "%", "winstreak": w}
 
+
+@app.get("/creation_rythme.html")
+def creation_rythme(request:Request) -> str:
+    """ récupère les paramètres de la partie depuis la base de données et les envoie à la page creation_rythme.html """
+    connect = sqlite3.connect("singonlight.db")
+    rythme = connect.execute('SELECT valeur FROM parametres WHERE cle="rythme";').fetchone()[0]
+    dureePartie = connect.execute('SELECT valeur FROM parametres WHERE cle="dureePartie";').fetchone()[0]
+
+    connect.close()
+    if rythme == -1:
+        return templates.TemplateResponse('creation_rythme.html',{'request': request, "dureePartie":dureePartie, "rythme":[]})
+    
+    rythme = str(rythme)
+    return templates.TemplateResponse('creation_rythme.html',{'request': request, "dureePartie":dureePartie, "rythme":rythme})
+
+
 @app.post("/run_creation_rythme") 
 async def run_creation_rythme(request:Request):
     body = await request.json()
@@ -237,7 +260,7 @@ async def run_creation_rythme(request:Request):
         return "Aucun rythme reçu."
     connect = sqlite3.connect('singonlight.db')
 
-    # il faut trasformer le rythme en chaîne de caractères pour le stocker dans la BDD ici
+    # il faut transformer le rythme en chaîne de caractères pour le stocker dans la BDD ici
 
 
     connect.execute('UPDATE parametres set valeur=? WHERE cle="rythme";', (str(rythme),))

@@ -178,6 +178,20 @@ a.joueur{
     
 }
 
+input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #7289da;
+  border: 2px solid #a5b6f3;
+}
+
 /* Styles for Highcharts */
 #container {
     height: 400px;

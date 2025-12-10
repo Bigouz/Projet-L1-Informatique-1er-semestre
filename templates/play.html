@@ -27,6 +27,11 @@
                 </br>Choisissez vos paramètres de jeu ci-dessous :
                 <br><br>
 
+                <div>
+                    <label for="rythme">Jouer avec votre rythme ? </label>
+                    <input type="checkbox" name="rythme" id="rythme" onchange="jouer_avec_rythme()" style="vertical-align:middle;"><br>
+                </div>
+
                 <label for="dureeIntervalle">Durée d'intervalles (en secondes) : </label>
                 <input type="number" name="dureeIntervalle" id="dureeIntervalle" value="{{dureeIntervalle}}" max="2" min="0.1" step="0.1" onchange="change_value(this);temps_total()"><br>
 
@@ -45,8 +50,20 @@
             </p>
             <br><br>
             <p id="temps"></p>
+            <span id="longueur_rythme" style="opacity: 0;">{{rythme}}</span>
             
             <script>
+                function jouer_avec_rythme(){
+                    if (document.getElementById("rythme").checked){
+                        document.getElementById("dureePartie").disabled = true;
+                        document.getElementById("dureePartie").value = parseInt(document.getElementById("longueur_rythme").innerText);
+                        temps_total();
+                    } else {
+                        document.getElementById("dureePartie").disabled = false;
+                    }
+                }
+
+
                 function change_value(t){
                     t.value = t.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
                     let v = parseFloat(t.value);
@@ -83,7 +100,7 @@
                 const response = await fetch('/run_play', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({"dureeIntervalle":dureeIntervalle, "dureePartie":dureePartie})
+                    body: JSON.stringify({"dureeIntervalle":dureeIntervalle, "dureePartie":dureePartie, "isRythme": document.getElementById("rythme").checked ? 1 : 0})
                 });
                 const data = await response.json();
                 document.getElementById('result').innerText = data["message"];

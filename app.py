@@ -20,6 +20,7 @@ import SoundSensor as Sound
 def gen_bdd():
     connect = sqlite3.connect('singonlight.db')
     connect.execute('CREATE TABLE IF NOT EXISTS parametres (cle TEXT PRIMARY KEY,valeur INTEGER);') # utilisé afin d'obtenir le seuil de calibration
+    connect.execute('CREATE TABLE IF NOT EXISTS histoire (cle INTEGER PRIMARY KEY,rythme TEXT,intervalle DOUBLE);') # utilisé afin d'obtenir les rythmes du mode histoire
     connect.execute('CREATE TABLE IF NOT EXISTS scores (intervalleScore TEXT PRIMARY KEY, occurence INTEGER);') # utilisé afin d'obtenir les scores des parties jouées
     connect.execute('CREATE TABLE IF NOT EXISTS rythme (id INTEGER PRIMARY KEY AUTOINCREMENT, rythme CHAR(120));') # itlisé afin d'obtenir les rythmes créés par les utilisateurs
     everything = connect.execute('SELECT * FROM parametres;')
@@ -31,6 +32,36 @@ def gen_bdd():
         connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?);', ("dureePartie", 25)) # durée de la partie en intervalles
         connect.execute('INSERT INTO parametres (cle,valeur) VALUES (?,?);', ("winstreak", 0)) # winstreak initialisé à 0
         connect.execute('INSERT INTO rythme (rythme) VALUES (?);', ("2")) # rythme custom
+
+    
+        """
+        Les rythmes du mode histoire
+        """
+        
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (1, "00100",1.0)) # rythme histoire 1
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (2, "010010",1.0)) # rythme histoire 2
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (3, "100",1.0)) # rythme histoire 3
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (4, "00100",0.8)) # rythme histoire 4
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (5, "10001",0.8)) # rythme histoire 5
+        
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (6, "11010",1.0)) # rythme histoire 6
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (7, "11101",0.6)) # rythme histoire 7
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (8, "0110010101",0.8)) # rythme histoire 8
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (9, "11101011",0.8)) # rythme histoire 9
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (10, "101001011",0.7)) # rythme histoire 10
+        
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (11, "010",0.5)) # rythme histoire 11
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (12, "11101",0.5)) # rythme histoire 12
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (13, "011110001011011111",0.5) # rythme histoire 13
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (14, "101010101111011101001",0.5)) # rythme histoire 14
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (15, "10110011001101",0.4)) # rythme histoire 15
+        
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (16, "1111100001111111000000000011110000111111111111111111111111111111000111",0.1)) # rythme histoire 16 [0.5b,0.4s,0.7b,1s,0.4b,0.4s,3b,0.3s,0.3b]
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (17, "1111111111110000011111001111111001111111001111111000000000000000000001111100001111111111111111111111111111111111111111",0.1)) # rythme histoire 17 [1.2b,0.5s,0.5b,0.2s,0.7b,0.2s,0.7b,0.2s,0.7b,2s,0.5b,0.4s,4b]
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (18, "111000111000111000111000000000011100011111110001111000111110001111000111110001110000000000000001111111111000001110011",0.1)) # rythme histoire 18 [0.3b,0.3s,0.3b,0.3s,0.3b,0.3s,0.3b,1s,0.3b,0.3s,0.7b,0.3s,0.4b,0.3s,0.5b,0.3s,0.4b,0.3s,0.5b,0.3s,0.3b,1.5s,1b,0.5s,0.3b,0.2s,0.2b]
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (19, "011011011011111001110011001110001100000110011111000111100110011111001111000000011100110001100110000110011100110000111111",0.1)) # rythme histoire 19 [0.1s,0.2b,0.1s,0.2b,0.1s,0.2b,0.1s,0.5b,0.2s,0.3b,0.2s,0.2b,0.2s,0.3b,0.3s,0.2b,0.5s,0.2b,0.2s,0.5b,0.3s,0.4b,0.2s,0.2b,0.2s,0.5b,0.2s,0.4b,0.7s,0.3b,0.2s,0.2b,0.3s,0.2b,0.2s,0.2b,0.4s,0.2b,0.2s,0.3b,0.2s,0.2b,0.4s,0.6b]
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (20, "0110101110111010111100111111011011101101010101010101010000011001111101100111011011111001111111111111111111111111111000000000000000000111110000111111100000001111100000000000000001100110011101100111100110111",0.1)) # rythme histoire 20 [0.1s,0.2b,0.1s,0.1b,0.1s,0.3b,0.1s,0.3b,0.1s,0.1b,0.1s,0.4b,0.2s,0.6b,0.1s,0.2b,0.1s,0.3b,0.1s,0.2b,0.1s,0.1b,0.1s,0.1b,0.1s,0.1b,0.1s,0.1b,0.1s,0.1b,0.1s,0.1b,0.1s,0.1b,0.1s,0.1b,0.5s,0.2b,0.2s,0.5b,0.1s,0.2b,0.2s,0.3b,0.1s,0.2b,0.1s,0.5b,0.2s,2.8b,1.8s,0.5b,0.4s,0.7b,0.7s,0.5b,1.6s,0.2b,0.2s,0.2b,0.2s,0.3b,0.1s,0.2b,0.2s,0.4b,0.2s,0.2b,0.1s,0.3b]
+
 
     stats = connect.execute('SELECT * FROM scores;')
     data_scores = stats.fetchall()

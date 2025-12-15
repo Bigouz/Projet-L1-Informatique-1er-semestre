@@ -77,4 +77,14 @@ function showChart(data) {
             }
         }]
     });
+
 };
+
+<script>
+function apparition(button) {
+    button.disabled = true;
+    const gif = document.getElementById("gifDragon");
+    gif.classList.remove("hidden");
+    gif.classList.add("visible");
+}
+</script>

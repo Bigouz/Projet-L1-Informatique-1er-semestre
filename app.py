@@ -36,6 +36,9 @@ def gen_bdd():
     
         """
         Les rythmes du mode histoire
+        Légende : 
+        {temps}b = faire du bruit durant {temps} seconde(s)
+        {temps}s = silence durant {temps} seconde(s)
         """
         
         connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (1, "00100",1.0)) # rythme histoire 1

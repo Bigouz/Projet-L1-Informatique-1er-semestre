@@ -44,7 +44,8 @@ def gen_bdd():
     
     if len(connect.execute("SELECT * FROM histoire;").fetchall()) == 0:
         """
-        Mode facile : Comprendre les bases du jeu
+        Niveaux facile : Comprendre les bases du jeu
+        Condition victoire : 50%
         """
         
         connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (1, "11010",1.0)) # rythme histoire 1
@@ -54,7 +55,8 @@ def gen_bdd():
         connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (5, "101001011",0.7)) # rythme histoire 5
 
         """
-        Mode Intermediaire : Acceleration
+        Niveaux Intermediaire : Savoir gérer le changement de rythme 
+        Condition victoire : 70%
         """
         
         connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (6, "011110001011011111",0.6)) # rythme histoire 6
@@ -64,11 +66,20 @@ def gen_bdd():
         connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (10, "1011011011110010010011000000101111111110110101",0.3)) # rythme histoire 10
 
         """
-        Mode Difficile : Rythme non fixe
+        Niveaux Difficile : Savoir gérer le changement d'intervalle
+        Condition victoire : 70%
         """
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (11, "1111100001111111000000000011110000111111111111111111111111111111000111",0.1)) # rythme histoire 11 [0.5b,0.4s,0.7b,1s,0.4b,0.4s,3b,0.3s,0.3b]
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (12, "111000011111000000111111100000000000000000000111111100011100111100000111000011000001111100111000110011100111",0.1)) # rythme histoire 12
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (13, "1111111111000011100000111100111001111001110000011110001110011000001110000011001100110001110000110011110000000000111111001110000011100111000111111110000110011000110011000111110",0.1)) # rythme histoire 13
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (14, "111001100110001101111111111001111000111001111100000111001110111011100000000000000011111011001110000000110111100111000000000011110000",0.1) # rythme histoire 14
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (15, "11111111111100000000000000011001101111101101100001111111001110001111011100000011011011000111110000001100111000000110111110011101011110110011100111",0.1)) # rythme histoire 15
+
+                
 
         """
         Mode Impossible : Bonne chance
+        Condition victoire : 70%
         """
         
         connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (16, "1111100001111111000000000011110000111111111111111111111111111111000111",0.1)) # rythme histoire 16 [0.5b,0.4s,0.7b,1s,0.4b,0.4s,3b,0.3s,0.3b]

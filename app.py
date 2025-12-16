@@ -246,6 +246,7 @@ async def run_play(request:Request):
         connect = sqlite3.connect('singonlight.db')
         rythme = connect.execute("SELECT rythme FROM rythme WHERE id=1;").fetchone()[0]
         connect.close()
+        rythme = [int(e) for e in rythme]
     print(rythme)
     save_param_jouer(dureeIntervalle, dureePartie)
 
@@ -266,11 +267,14 @@ async def run_play(request:Request):
     pourcentage = score.calculerPourcentage(rythme, signal)
     enregistrer_score(pourcentage)
     print(str(pourcentage) + "%")
-    
+
+    w=get_winstreak()
     if pourcentage >= 50:
-        w = increment_winstreak()
+        if isRythme == 0:
+            w = increment_winstreak()
         return {"message":"Vous avez gagné avec un score de " + str(pourcentage) + "%", "winstreak": w}
-    w = reset_winstreak()
+    if isRythme == 0:
+        w = reset_winstreak()
     return {"message": "Vous avez perdu avec un score de " + str(pourcentage) + "%", "winstreak": w}
 
 
@@ -339,13 +343,53 @@ async def run_play_rythme(request:Request):
         w = reset_winstreak()
         return {"message": "Vous avez perdu avec un score de " + str(pourcentage) + "%", "winstreak": w}
 
+niveau_histoire = 1
+async def run_play_histoire():
+    """ appelé quand le joueur appuie sur le bouton jouer avec ton rythme"""
+    connect = sqlite3.connect('singonlight.db')
+    dureeIntervalle = connect.execute("SELECT intervalle FROM histoire WHERE id=" + str(niveau_histoire) + ";").fetchone()[0]
+    dureePartie = len(connect.execute("SELECT rythme FROM histoire WHERE id=" + str(niveau_histoire) + ";").fetchone())
+    rythme = connect.execute("SELECT rythme FROM histoire WHERE id=" + str(niveau_histoire) + ";").fetchone()
+    global start_event
+    start_event = asyncio.Event()
+    sound_task = asyncio.create_task(Sound.main(start_event,rythme))
+    start_event.set()
+
+    res = await sound_task
+
+    print(res)
+    print("fin de partie")
+    print("son (" + str(len(res))+"): " + str(res))
+    print("led (" + str(len(rythme))+"): " + str(rythme))
+        
+    signal = transformation_signal_moyenne(res,dureeIntervalle)
+    print(res, "=>", signal)
+    pourcentage = score.calculerPourcentage(rythme, signal)
+    enregistrer_score(pourcentage)
+    print(str(pourcentage) + "%")
+
+    cond_victoire = 50
+    if niveau_histoire >= 13 :
+        cond_victoire = 70
+    if pourcentage >= cond_victoire:
+        niveau_histoire += 1
+        return {"message":"Vous avez gagné avec un score de " + str(pourcentage) + "%"}
+    niveau_histoire = 1    
+    return {"message": "Vous avez perdu avec un score de " + str(pourcentage) + "%"}
+
 def reset_winstreak():
     connect = sqlite3.connect('singonlight.db')
     connect.execute('UPDATE parametres set valeur=0 WHERE cle="winstreak";')
     connect.commit()
     connect.close()
     return 0
-
+def get_winstreak():
+    connect = sqlite3.connect('singonlight.db')
+    current_winstreak = connect.execute('SELECT valeur FROM parametres WHERE cle="winstreak";').fetchone()[0]
+    connect.close()
+    return current_winstreak
+    
+    
 def increment_winstreak():
     connect = sqlite3.connect('singonlight.db')
     current_winstreak = connect.execute('SELECT valeur FROM parametres WHERE cle="winstreak";').fetchone()[0]

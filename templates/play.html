@@ -47,7 +47,7 @@
                     <br><br>
                     <span id="temps_total"> </span><br>
                     <button id="start" class="start"
-                        onclick="this.disabled = true;save_param()"><strong>Jouer</strong></button>
+                        onclick="this.disabled = true;save_param();document.getElementById('result').innerText = ''; "><strong>Jouer</strong></button>
                     <p id="winstreak">🔥🔥🔥 <strong>Winstreak</strong>: {{winstreak}} 🔥🔥🔥 </p>
                 </div>
 
@@ -125,3 +125,4 @@
 </body>
 
 </html>
+

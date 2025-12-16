@@ -73,8 +73,8 @@ def gen_bdd():
         Niveaux Difficile : Savoir gérer le changement d'intervalle
         Condition victoire : 60%
         """
-        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (11, "1111100001111111000000000011110000111111111111111111111111111111000111",0.1))
-        # rythme histoire 11 [0.5b,0.4s,0.7b,1s,0.4b,0.4s,3b,0.3s,0.3b]
+        connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (11, "1111100001111111000000000011110000111111111111111111111111111111000111001100111001111001100011",0.1))
+        # rythme histoire 11 [0.5b,0.4s,0.7b,1.0s,0.4b,0.4s,3.0b,0.3s,0.3b,0.2s,0.2b,0.2s,0.3b,0.2s,0.4b,0.2s,0.2b,0.3s,0.2b]
         connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (12, "111000011111000000111111100000000000000000000111111100011100111100000111000011000001111100111000110011100111",0.1))
         # rythme histoire 12 [0.3b,0.4s,0.5b,0.6s,0.7b,2.0s,0.7b,0.3s,0.3b,0.2s,0.4b,0.5s,0.3b,0.4s,0.2b,0.5s,0.5b,0.2s,0.3b,0.3s,0.2b,0.2s,0.3b,0.2s,0.3b]
         connect.execute('INSERT INTO histoire (cle,rythme,intervalle) VALUES (?,?,?);', (13, "11111111110000111000001111001110011110011100000111100011100110000011100000110011001100011100001100111100000000001111110011100000111001110001111111100001110011000111111001110001111110",0.1))

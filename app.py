@@ -9,15 +9,14 @@ import score as score
 from random import randint
 from ws_manager import active_connections, broadcast
 
-start_event = asyncio.Event()
 
 ### pour tester du code sans le raspberry PI, on peut commenter l'import de SoundSensor et LED (dans SoundSensor).
 Sound = None
 try:
-    import SoundSensor as Sound
+    #import SoundSensor as Sound
 
     ### pour tester les messages Websockets sans raspberry PI, décommenter la ligne suivante.
-    #import test as Sound
+    import test as Sound
 except Exception as e:
     Sound = None
     print("Impossible d'importer SoundSensor, utilisation du module de test.")
@@ -302,12 +301,7 @@ async def run_play(request:Request):
     print(rythme)
     save_param_jouer(dureeIntervalle, dureePartie)
 
-    global start_event
-    start_event = asyncio.Event()
-    sound_task = asyncio.create_task(Sound.main(start_event,rythme))
-    start_event.set()
-
-    res = await sound_task
+    res = await Sound.main(rythme)
 
     print(res)
     print("fin de partie")

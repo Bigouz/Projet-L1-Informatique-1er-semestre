@@ -30,7 +30,7 @@
             const dureeIntervalle = parseFloat(document.getElementById('dureeIntervalle').value);
             const dureePartie = parseInt(document.getElementById('dureePartie').value);
 
-            const response = await fetch('/run_play', {
+            const response = await fetch('/run_play_histoire', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ "dureeIntervalle": dureeIntervalle, "dureePartie": dureePartie, "isRythme": document.getElementById("rythme").checked ? 1 : 0 })

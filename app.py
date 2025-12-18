@@ -13,10 +13,10 @@ from ws_manager import active_connections, broadcast
 ### pour tester du code sans le raspberry PI, on peut commenter l'import de SoundSensor et LED (dans SoundSensor).
 Sound = None
 try:
-    #import SoundSensor as Sound
+    import SoundSensor as Sound
 
     ### pour tester les messages Websockets sans raspberry PI, décommenter la ligne suivante.
-    import test as Sound
+    #import test as Sound
 except Exception as e:
     Sound = None
     print("Impossible d'importer SoundSensor, utilisation du module de test.")
@@ -352,41 +352,6 @@ async def run_creation_rythme(request:Request):
     connect.close()
     return "rythme sauvegardé."
 
-@app.post("/run_play_rythme")
-async def run_play_rythme(request:Request):
-    """ appelé quand le joueur appuie sur le bouton jouer avec ton rythme"""
-    connect = sqlite3.connect('singonlight.db')
-    body = await request.json()
-    dureeIntervalle = body.get("dureeIntervalle",1)
-    dureePartie = body.get("dureePartie",25)
-    save_param_jouer(dureeIntervalle, dureePartie)
-    rythme = connect.execute("SELECT rythme FROM rythme WHERE id=1;").fetchone()[0]
-    if rythme == "2":
-        return("Tu n'as pas crée de rythme")
-    else:
-        global start_event
-        start_event = asyncio.Event()
-        sound_task = asyncio.create_task(Sound.main(start_event,rythme))
-        start_event.set()
-
-        res = await sound_task
-
-        print(res)
-        print("fin de partie")
-        print("son (" + str(len(res))+"): " + str(res))
-        print("led (" + str(len(rythme))+"): " + str(rythme))
-            
-        signal = transformation_signal_moyenne(res,dureeIntervalle)
-        print(res, "=>", signal)
-        pourcentage = score.calculerPourcentage(rythme, signal)
-        enregistrer_score(pourcentage)
-        print(str(pourcentage) + "%")
-
-        if pourcentage >= 50:
-            w = increment_winstreak()
-            return {"message":"Vous avez gagné avec un score de " + str(pourcentage) + "%", "winstreak": w}
-        w = reset_winstreak()
-        return {"message": "Vous avez perdu avec un score de " + str(pourcentage) + "%", "winstreak": w}
 
 niveau_histoire = 1
 async def run_play_histoire():

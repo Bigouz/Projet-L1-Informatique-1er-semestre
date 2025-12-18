@@ -22,7 +22,6 @@ class GroveSoundSensor(object):
 Grove = GroveSoundSensor
 
 async def main(start_event, rythme):
-  await start_event.wait()
   pin = 0
 
   sensor = GroveSoundSensor(pin)

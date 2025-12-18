@@ -139,7 +139,6 @@ app = FastAPI(lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get('/')
 def main(request:Request):
-    #user = {'username': 'Cécile'}
     return templates.TemplateResponse("index.html",{"request":request})
 
 @app.get("/Mode.html")
@@ -301,7 +300,7 @@ async def run_play(request:Request):
     print(rythme)
     save_param_jouer(dureeIntervalle, dureePartie)
 
-    res = await Sound.main(rythme)
+    res = await Sound.main(None, rythme)
 
     print(res)
     print("fin de partie")

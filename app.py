@@ -389,10 +389,10 @@ async def run_play_histoire():
         niveau_histoire += 1
         if niveau_histoire > 20:
             niveau_histoire = 1
-            return {"message":"<script>apparition()></script>"}
-        return {"message":"Vous avez gagné avec un score de " + str(pourcentage) + "%"}
+            return {"message":"<script>apparition()></script>", "niveau": niveau_histoire, "etat":"fini"}
+        return {"message":"Vous avez gagné avec un score de " + str(pourcentage) + "%", "niveau": niveau_histoire, "etat": "gagné"}
     niveau_histoire = 1
-    return {"message": "Vous avez perdu avec un score de " + str(pourcentage) + "%"}
+    return {"message": "Vous avez perdu avec un score de " + str(pourcentage) + "%", "niveau": niveau_histoire, "etat":"perdu"}
 
 def reset_winstreak():
     connect = sqlite3.connect('singonlight.db')

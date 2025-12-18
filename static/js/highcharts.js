@@ -84,7 +84,7 @@ async function apparition(button) {
     gif.classList.remove("hidden");
     gif.classList.add("visible");
 
-    setTimeout(function() {
+    setTimeout(async function() {
         gif.classList.remove("visible");
         gif.classList.add("hidden");
 	const response = await fetch('/run_play_histoire', {
@@ -94,10 +94,16 @@ async function apparition(button) {
                         });
         const data = await response.json();
 	var niveau = data["niveau"];
+	var etat=data["etat"];
+	if (etat == "gagné"){
 	console.log(niveau);
-	
+	document.getElementById("niveau").innerText = niveau;
+	document.getElementById("buttonHistoire").click();
+	}
+		else { if(etat == "perdu"){
     }, 3000);
 }
+
 
 
 

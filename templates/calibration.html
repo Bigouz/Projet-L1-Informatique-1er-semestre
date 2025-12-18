@@ -53,6 +53,7 @@
 
 
                 <script>
+                    // se connecte au websocket pour les messages de calibration automatique
                     const ws = new WebSocket("ws://localhost:8000/ws");
 
                     ws.onmessage = function (event) {
@@ -62,6 +63,7 @@
                     };
 
                     async function calibrate() {
+                        // calibration manuelle, appelle la fonction python qui sauvegarde le seuil
                         const seuil = parseInt(document.getElementById('seuil').value);
 
                         const response = await fetch('/run-calibrate', {
@@ -75,6 +77,7 @@
                     }
 
                     async function auto_calibrate() {
+                        // commence la calibration automatique
                         document.getElementById('log').innerHTML = "";
                         document.getElementById('result').innerText = "";
                         document.getElementById('cal_man_btn').disabled = true;

@@ -82,22 +82,27 @@ function showChart(data) {
 
 async function apparition(button) {
     let gif = document.getElementById("gifDragon");
-
-    let element = document.getElementById("buttonHistoire");
-    let hidden = element.getAttribute("hidden")
-    if (hidden){
-	element.removeAttribute("hidden");}
-    else {
-	element.setAttribute("hidden", "hidden");}
-    
     gif.classList.remove("hidden");
     gif.classList.add("visible");
 
     setTimeout(function() {
         gif.classList.remove("visible");
         gif.classList.add("hidden");
+	const response = await fetch('/run_play_histoire', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({})
+                        });
+        const data = await response.json();
+	var niveau = data["niveau"];
+	console.log(niveau);
+	
     }, 3000);
 }
+
+
+
+
 
 
 

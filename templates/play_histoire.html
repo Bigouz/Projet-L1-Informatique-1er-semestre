@@ -29,6 +29,7 @@
   			<img id="victory" src="static/images/ecran_victoire.png"  class="hidden">
 
 	      <script>
+        // appuie sur le bouton invisible
 		document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("buttonHistoire").click();
 		});
@@ -37,42 +38,6 @@
 	      <p>Vous êtes au niveau <span id="niveau">1</span></p>
 		</div>
     
-    <script>
-        function jouer_avec_rythme() {
-            if (document.getElementById("rythme").checked) {
-                document.getElementById("dureePartie").disabled = true;
-                document.getElementById("dureePartie").value = parseInt(document.getElementById("longueur_rythme").innerText);
-                temps_total();
-            } else {
-                document.getElementById("dureePartie").disabled = false;
-            }
-        }
-        const delay = ms => new Promise(res => setTimeout(res, ms));
-        async function save_param() {
-            document.getElementById("temps").innerText = "La partie commence dans 3 secondes.";
-            await delay(1000);
-            document.getElementById("temps").innerText = "La partie commence dans 2 secondes.";
-            await delay(1000);
-            document.getElementById("temps").innerText = "La partie commence dans 1 secondes.";
-            await delay(1000);
-            document.getElementById("temps").innerText = "";
-
-            const dureeIntervalle = parseFloat(document.getElementById('dureeIntervalle').value);
-            const dureePartie = parseInt(document.getElementById('dureePartie').value);
-
-            const response = await fetch('/run_play_histoire', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ "dureeIntervalle": dureeIntervalle, "dureePartie": dureePartie, "isRythme": document.getElementById("rythme").checked ? 1 : 0 })
-            });
-
-            const data = await response.json();
-            document.getElementById('result').innerText = data["message"];
-            document.getElementById('result').style.color = data["message"].includes("gagné") ? "lime" : "red";
-
-            document.getElementById('start').disabled = false;
-        }
-    </script>
 <script src = "static/js/highcharts.js"></script>
 </body>
 

@@ -19,9 +19,6 @@ class GroveLed(GPIO):
 
 Grove = GroveLed
 pin=12
-connect = sqlite3.connect("singonlight.db")
-dureeIntervalle = connect.execute("SELECT valeur FROM parametres WHERE cle = 'dureeIntervalle';").fetchone()[0]
-connect.close()
     
 led = GroveLed(pin)
 def change_state(rythme,i):

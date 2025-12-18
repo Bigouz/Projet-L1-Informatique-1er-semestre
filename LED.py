@@ -9,9 +9,11 @@ class GroveLed(GPIO):
         super(GroveLed, self).__init__(pin, GPIO.OUT)
 
     def on(self):
+        """ allume la LED """
         self.write(1)
 
     def off(self):
+        """ eteint la LED """
         self.write(0)
 
 
@@ -20,37 +22,14 @@ pin=12
 connect = sqlite3.connect("singonlight.db")
 dureeIntervalle = connect.execute("SELECT valeur FROM parametres WHERE cle = 'dureeIntervalle';").fetchone()[0]
 connect.close()
-
-async def main(schema_aleatoire:list[int],start_event):
-    """utiliser LED.run() a la place car c'est une fonction async. """
-    await start_event.wait()
-
-    led = GroveLed(pin)
-
-    for i in range(len(schema_aleatoire)):
-        if schema_aleatoire[i] == 1:
-            led.on()
-        elif schema_aleatoire[i] == 0:
-            led.off()
-        
-        await asyncio.sleep(dureeIntervalle)
-    led.off()
-    return schema_aleatoire
     
 led = GroveLed(pin)
 def change_state(rythme,i):
+    """ change l'etat de la LED selon le rythme et l'indice i
+        si rythme[i] == 1, alors la led s'allume, elle s'éteint sinon. 
+    """
     if rythme[i] == 1:
         led.on()
     else:
         led.off()
     return rythme
-    
-def run(schema_aleatoire:list[int]):
-    """a utiliser pour executer main()"""
-    return asyncio.run(main(schema_aleatoire))
-
-if __name__ == '__main__':
-    asyncio.run(main())
-
-
-

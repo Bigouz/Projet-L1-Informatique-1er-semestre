@@ -8,7 +8,20 @@
 
 <body>
     <link rel="stylesheet" href="static/css/style.css">
+    <div class="parent">
+        <div class="div1">
+            <div class="div1a">
+                <a class="indexBTN" href="/">Menu Principal</a><br>
+                <a class="playBTN" id="currentBTN" href="/Mode.html">Jouer</a><br>
+                <a class="calibrationBTN" href="/calibration.html">Calibration</a><br>
+                <a class="dataBTN" href="/data.html">Données</a><br>
+                <a class="creationBTN" href="/creation_rythme.html">Créer son propre rythme!</a><br>
+                <a href="https://github.com/Bigouz/Projet-L1-Informatique-1er-semestre" target="_blank"
+                    class="github">GitHub</a>
 
+            </div>
+        </div>
+        <div class="div2">
     <button hidden id = "buttonHistoire" class="start" onclick="apparition()">Jouer </button>
 
               <img id="gifDragon" src="static/images/test.gif"  class="hidden">
@@ -22,6 +35,7 @@
 	</script>
 
 	      <p>Vous êtes au niveau <span id="niveau">1</span></p>
+		</div>
     
     <script>
         function jouer_avec_rythme() {

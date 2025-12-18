@@ -1,10 +1,13 @@
 import asyncio
 from ws_manager import broadcast
 
+### Fichier test pour pouvoir tester la calibration sans le raspberry PI.
+### Pour tester, il faut decommenter l'import dans app.py
+
 async def calibrage(n):
     """
     n = durée en secondes
-    Renvoie le seuil bas du son ambiant
+    Renvoie le seuil bas du son ambiant (0)
     """
     taux_interpolation = 0.1
 

@@ -21,23 +21,26 @@ class GroveSoundSensor(object):
 
 Grove = GroveSoundSensor
 
-async def main(start_event, rythme):
+async def main(start_event, rythme, dureeIntervalleHist=None):
   pin = 0
 
   sensor = GroveSoundSensor(pin)
   taux_interpolation = 0.1
   
-  connect = sqlite3.connect("singonlight.db")
-  data = connect.execute("SELECT valeur FROM parametres WHERE cle = 'dureeIntervalle';")
-  data = data.fetchone()[0]
-  data2= connect.execute("SELECT valeur FROM parametres WHERE cle = 'dureePartie';")
-  data2= data2.fetchone()[0]
-  connect.close()
+  if dureeIntervalleHist == None:
+    connect = sqlite3.connect("singonlight.db")
+    data = connect.execute("SELECT valeur FROM parametres WHERE cle = 'dureeIntervalle';")
+    data = data.fetchone()[0]
+    connect.close()
+  else:
+    data = dureeIntervalleHist  
+  data2= len(rythme)
+  print(data2)
   print('Detecting sound...')
   L=[]
   for j in range(int(data2)):
     LED.change_state(rythme,j)
-    for i in range(int(data*(1/taux_interpolation))):
+    for i in range(round(data*(1/taux_interpolation))):
         print('Sound value: {0}'.format(sensor.sound))
         L.append(sensor.sound)
         await asyncio.sleep(taux_interpolation)

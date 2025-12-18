@@ -354,24 +354,26 @@ async def run_creation_rythme(request:Request):
 
 
 niveau_histoire = 1
+@app.post("/run_play_histoire")
 async def run_play_histoire():
     """ appelé quand le joueur appuie sur le bouton jouer avec ton rythme"""
+    global niveau_histoire
     connect = sqlite3.connect('singonlight.db')
-    dureeIntervalle = connect.execute("SELECT intervalle FROM histoire WHERE id=" + str(niveau_histoire) + ";").fetchone()[0]
-    dureePartie = len(connect.execute("SELECT rythme FROM histoire WHERE id=" + str(niveau_histoire) + ";").fetchone())
-    rythme = connect.execute("SELECT rythme FROM histoire WHERE id=" + str(niveau_histoire) + ";").fetchone()
-    global start_event
-    start_event = asyncio.Event()
-    sound_task = asyncio.create_task(Sound.main(start_event,rythme))
-    start_event.set()
-
-    res = await sound_task
+    dureeIntervalle = connect.execute("SELECT intervalle FROM histoire WHERE cle=" + str(niveau_histoire) + ";").fetchone()[0]
+    rythme = connect.execute("SELECT rythme FROM histoire WHERE cle=" + str(niveau_histoire) + ";").fetchone()[0]
+    rythme = [int(e) for e in rythme]
+    dureePartie = len(rythme)
+    print(rythme)
+    res = await Sound.main(None, rythme, dureeIntervalle)
+    print(niveau_histoire)
+    print(dureePartie)
 
     print(res)
     print("fin de partie")
     print("son (" + str(len(res))+"): " + str(res))
     print("led (" + str(len(rythme))+"): " + str(rythme))
-        
+    
+    print(dureeIntervalle)
     signal = transformation_signal_moyenne(res,dureeIntervalle)
     print(res, "=>", signal)
     pourcentage = score.calculerPourcentage(rythme, signal)
@@ -385,8 +387,11 @@ async def run_play_histoire():
         cond_victoire = 70
     if pourcentage >= cond_victoire:
         niveau_histoire += 1
+        if niveau_histoire > 20:
+            niveau_histoire = 1
+            return {"message":"<script>apparition()></script>"}
         return {"message":"Vous avez gagné avec un score de " + str(pourcentage) + "%"}
-    niveau_histoire = 1    
+    niveau_histoire = 1
     return {"message": "Vous avez perdu avec un score de " + str(pourcentage) + "%"}
 
 def reset_winstreak():
@@ -420,7 +425,9 @@ def transformation_signal_moyenne(signal,dureeIntervalle):
     signal_bin = [1 if signal[i] >= seuil else 0 for i in range(len(signal))]
     taux = 0.1
     signal_compr = []
-    n = int(dureeIntervalle/taux)
+    n = round(dureeIntervalle/taux)
+    print(n)
+
     for i in range(0,len(signal_bin),n):
         signal_compr.append(sum(signal_bin[i:i+n])/n)
     signal_fin = []

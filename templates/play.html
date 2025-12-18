@@ -62,17 +62,19 @@
 
                 <script>
                     function jouer_avec_rythme() {
+                        // appelé quand l'etat de la case du rythme personnalisé est changé
                         if (document.getElementById("rythme").checked) {
-                            document.getElementById("dureePartie").disabled = true;
-                            document.getElementById("dureePartie").value = parseInt(document.getElementById("longueur_rythme").innerText);
-                            temps_total();
+                            document.getElementById("dureePartie").disabled = true; // desactivation de l'input de duree de la partie en intervalles 
+                            document.getElementById("dureePartie").value = parseInt(document.getElementById("longueur_rythme").innerText); // changement de la valeur selon la longueur du rythme
+                            temps_total(); // calcul du temps total
                         } else {
-                            document.getElementById("dureePartie").disabled = false;
+                            document.getElementById("dureePartie").disabled = false; // reactivation de l'input de duree de la partie en intervalles
                         }
                     }
 
 
                     function change_value(t) {
+                        // change la valeur de dureeIntervalles si la valeur est mauvaise (en dehors du max, min, etc)
                         t.value = t.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
                         let v = parseFloat(t.value);
                         if (isNaN(v)) v = 0.1;
@@ -85,6 +87,7 @@
 
 
                     function temps_total() {
+                        //calcul du temps total
                         let temps = Math.round(document.getElementById("dureePartie").value * document.getElementById("dureeIntervalle").value);
                         document.getElementById("temps_total").innerHTML = "Temps total de la partie : " + temps + " secondes";
                         return temps;
@@ -93,6 +96,9 @@
 
                     const delay = ms => new Promise(res => setTimeout(res, ms));
                     async function save_param() {
+                        // sauvegarde les paramètres et lance la partie
+                        
+                        // delai de 3 secondes avant le debut de la partie
                         document.getElementById("temps").innerText = "La partie commence dans 3 secondes.";
                         await delay(1000);
                         document.getElementById("temps").innerText = "La partie commence dans 2 secondes.";
@@ -104,7 +110,7 @@
                         const dureeIntervalle = parseFloat(document.getElementById('dureeIntervalle').value);
                         const dureePartie = parseInt(document.getElementById('dureePartie').value);
 
-
+                        // lancement de la partie
                         const response = await fetch('/run_play', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },

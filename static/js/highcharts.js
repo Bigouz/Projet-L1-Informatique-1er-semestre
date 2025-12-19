@@ -117,6 +117,5 @@ async function apparition(button) {
 	    png.classList.remove("hidden");
 	    png.classList.add("visible");
 	}
-    }, 2650); // le gif est montré pendant 2.65 secondes
+    }, 5000); // le gif est montré pendant 5 secondes
 }
-
